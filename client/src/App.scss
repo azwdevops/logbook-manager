@@ -1,0 +1,431 @@
+:root {
+    --header-height: 2.7rem;
+    --nav-width: 68px;
+    /*===== Colors =====*/
+    --first-color: #4723d9;
+    --first-color-light: #afa5d9;
+    --white-color: #f7f6fb;
+    --theme-color-1: dodgerblue;
+    --theme-color-2: #7b0cfa;
+    --color-background: #f6f6f9;
+
+    /*===== Font and typography =====*/
+    --body-font: "Nunito", sans-serif;
+    --normal-font-size: 1rem;
+}
+
+* {
+    box-sizing: border-box !important;
+    padding: 0;
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+body {
+    position: relative;
+    font-family: var(--body-font);
+    font-size: var(--normal-font-size);
+    transition: 0.5s;
+    background-color: var(--color-background);
+}
+
+
+#sidebar {
+    transition: 0.7s ease-in-out;
+    /* background: linear-gradient(to top, rgb(187,72,187),dodgerblue) !important; */
+}
+
+.main-content {
+    margin-top: calc(var(--header-height) + 2rem);
+    min-height: calc(100vh - var(--header-height) - 2rem);
+}
+
+.hide-sidebar {
+    width: 0px !important;
+    transform: translateX(-150px);
+    padding: 0px;
+    z-index: -20;
+}
+
+.hide-btn {
+    display: none;
+}
+
+#item-loading, .page-loading {
+    pointer-events: none !important;
+    opacity: 0.6 !important;
+}
+
+a {
+    color: dodgerblue;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+button {
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover,
+a:hover {
+    opacity: 0.6;
+}
+
+h3 {
+    font-size: 1.7rem;
+    color: dodgerblue;
+    font-weight: bold;
+    text-align: center;
+}
+
+h4 {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+label {
+    color: indigo;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+input {
+    padding: 8px;
+    outline: none;
+    border-radius: 8px;
+    border: 2px solid lightgray;
+}
+
+input:focus {
+    outline: 2px solid dodgerblue;
+}
+
+@screen sm {
+    .show-mobile-sidebar {
+        width: 200px !important;
+        transform: translateX(0);
+        padding: 3px;
+        z-index: 1;
+    }
+
+    .hide-mobile-sidebar {
+        width: 0px !important;
+        transform: translateX(-200px);
+        padding: 0px;
+        z-index: -20;
+    }
+}
+
+ul {
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+ol {
+    padding-left: 20px;
+    list-style-type: decimal;
+}
+
+th {
+    color: purple;
+}
+
+th,
+td {
+    border: 1px solid !important;
+    padding: 4px;
+}
+
+.add-button {
+    background: linear-gradient(to right, dodgerblue, #5b18a8);
+    color: #ffffff;
+    width: fit-content;
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.add-button:hover {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.link {
+    color: dodgerblue;
+    cursor: pointer;
+}
+
+.link:hover {
+    opacity: 0.6;
+}
+
+/* START OF TABLE LAYOUT STYLES */
+.table-parent-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.table-parent-buttons button {
+    @extend .add-button;
+    /** note this works only with .scss files and not .css files for now */
+}
+
+.table-parent h3 {
+    font-size: 1.4rem;
+}
+
+table {
+    width: 100%;
+    margin-top: 5px;
+    max-width: 95vw;
+}
+
+.table-listing {
+    max-width: 1200px !important;
+    margin: auto;
+}
+
+.button-span,
+.button {
+    color: dodgerblue;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.button-span:hover,
+.button:hover {
+    opacity: 0.6;
+}
+
+table td {
+    text-align: center;
+}
+
+.dialog {
+    padding: 10px 20px 15px 15px;
+}
+
+.dialog h3 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    background-color: #dfe4f0;
+    max-width: 100%;
+    width: 100%;
+    z-index: 10000 !important;
+    padding-top: 5px;
+}
+
+.dialog-row {
+    display: flex;
+    max-width: 99%;
+    flex-wrap: wrap;
+}
+
+.dialog-row,
+.dialog-row-single-item {
+    margin: 15px auto;
+}
+
+.dialog-row>span {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 5px;
+    flex: 1;
+}
+
+.dialog .dialog-row-single-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-row input,
+.dialog-row select,
+.dialog-row-single-item input,
+.dialog-row-single-item select {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+    outline: none;
+}
+
+.dialog-row input:focus,
+.dialog-row-single-item input:focus {
+    border: 2px solid dodgerblue;
+}
+
+.dialog .form-buttons {
+    position: sticky;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+
+    button {
+        color: white;
+    }
+
+    button:nth-child(1) {
+        background: linear-gradient(to right, rgb(243, 2, 2), rgb(223, 39, 161));
+        justify-self: start;
+    }
+
+    button:nth-child(2) {
+        background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+        justify-self: end;
+    }
+}
+
+.dialog-links {
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+}
+
+.dialog textarea {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    resize: vertical;
+}
+
+.dialog textarea:focus {
+    border: 2px solid dodgerblue;
+}
+
+/* END OF DIALOG ELEMENTS STYLES */
+.not-available {
+    text-align: center;
+    color: red;
+}
+
+.tl {
+    text-align: left !important;
+}
+
+.tc {
+    text-align: center !important;
+}
+.bd {
+    font-weight: bold;
+}
+.red {
+    color: red;
+}
+
+.dodgerblue {
+    color: dodgerblue;
+}
+
+.green {
+    color: green !important;
+}
+
+.bg-green {
+    background-color: green !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.bg-red {
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+
+.bg-teal {
+    background-color: rgb(32, 158, 158);
+    color: white;
+    font-weight: bold;
+}
+
+
+.MuiTextField-root {
+    background-color: rgb(246, 246, 246);
+}
+
+.MuiAutocomplete-input {
+    padding: 20px !important;
+}
+
+@media screen and (min-width: 768px) {
+    body {
+        margin: calc(var(--header-height) + 1rem) 0 0 0;
+    }
+
+    /*Add padding body desktop*/
+    .body-pd {
+        margin-left: calc(var(--nav-width) + 150px);
+    }
+
+    .body-section {
+        margin-left: calc(var(--nav-width) + 150px);
+        transition: all 0.3s ease-in-out;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    th {
+        display: none;
+    }
+
+    tr {
+        margin-bottom: 20px;
+    }
+
+    tr,
+    td {
+        display: block;
+        padding: 5px;
+    }
+
+    td span,
+    td a {
+        text-align: left !important;
+    }
+
+    td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: initial;
+        display: block !important;
+        text-align: left;
+    }
+}
+
+/* START OF STYLES FOR SCREENS OF LESS THAN 600PX */
+@media screen and (max-width: 600px) {
+    .hide-on-mobile {
+        display: none !important;
+    }
+
+}
+
+/* END OF STYLES FOR SCREENS OF LESS THAN 600PX */
+
+/* START OF STYLES FOR SCREENS OF GREATER THAN 600PX */
+@media screen and (min-width: 600px) {
+    .hide-on-desktop {
+        display: none !important;
+    }
+}
+
+/* END OF STYLES FOR SCREENS OF GREATER THAN 600PX */

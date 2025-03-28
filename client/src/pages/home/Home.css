@@ -1,0 +1,42 @@
+.home {
+    display: flex;
+    padding: 10px 2rem;
+    gap: 20px;
+}
+
+.home .left,
+.home .right {
+    flex: 05;
+}
+
+.home .left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+}
+
+.home .left h1 {
+    font-size: 5rem;
+    color: purple;
+}
+
+.home .left p {
+    font-size: 1.2rem;
+}
+
+.home .right img {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+}
+
+@media screen and (max-width:768px) {
+    .home {
+        flex-direction: column-reverse;
+    }
+
+    .home .left h1 {
+        font-size: 3rem;
+    }
+}

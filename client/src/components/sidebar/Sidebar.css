@@ -1,0 +1,111 @@
+/*===== NAV =====*/
+.left-navbar {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: -30%;
+    width: 0px;
+    height: calc(100vh - var(--header-height));
+    padding: 0.5rem 1rem 0 0;
+    transition: all 0.3s ease-in-out;
+    margin-top: calc(var(--header-height));
+    padding-top: 1rem;
+    background: linear-gradient(to bottom, var(--first-color), dodgerblue);
+    z-index: 1;
+    scrollbar-width: none !important;
+}
+
+.nav {
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+}
+
+.nav-logo,
+.sidebar-link {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    column-gap: 0.7rem;
+    padding: 0.3rem 0 0.3rem 1.5rem;
+}
+
+.nav-logo {
+    margin-bottom: 2rem;
+}
+
+.nav-logo-icon {
+    font-size: 1.25rem;
+    color: var(--white-color);
+}
+
+.sidebar-link {
+    position: relative;
+    margin-bottom: 1rem;
+    transition: 0.3s;
+    display: flex;
+    color: white;
+}
+
+
+.sidebar-link:hover {
+    color: yellow;
+}
+
+.main-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sub-links {
+    display: flex;
+    flex-direction: column;
+    padding-left: 4rem;
+    gap: 15px;
+    margin-bottom: 0.6rem;
+    color: white !important;
+}
+
+.link-name {
+    color: white;
+}
+
+.nav-icon {
+    font-size: 1.25rem;
+}
+
+/*Show navbar movil*/
+.show {
+    left: 0 !important;
+    width: calc(var(--nav-width) + 150px) !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+}
+
+
+/*Active links*/
+.active {
+    color: yellow !important;
+    font-weight: bold !important;
+}
+
+.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 2px;
+    height: 32px;
+    background-color: var(--white-color);
+}
+
+/* ===== MEDIA QUERIES=====*/
+@media screen and (min-width: 768px) {
+    .left-navbar {
+        padding: 1rem 1rem 0 0;
+    }
+}

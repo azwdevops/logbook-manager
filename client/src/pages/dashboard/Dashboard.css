@@ -1,0 +1,21 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 10px;
+    gap: 2rem;
+}
+
+
+.dashboard h3 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.trip-status span {
+    margin-top: 7px;
+    display: block;
+}
+
+.trip-status hr {
+    margin-top: 7px;
+}

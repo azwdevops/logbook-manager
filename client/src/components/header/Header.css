@@ -1,0 +1,63 @@
+/*===== HEADER =====*/
+.header {
+    width: 100%;
+    height: var(--header-height);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    background: linear-gradient(to right, #f0f0f0, #dee3fa);
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 5px 15px;
+    z-index: var(--z-fixed);
+    transition: 0.5s;
+}
+
+.header-left {
+    color: var(--white-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left>i {
+    padding-top: 5px;
+}
+
+.header-left>h1 {
+    font-size: 1.8rem;
+    padding-left: 1.2rem;
+    color: dodgerblue;
+}
+
+
+.header-right {
+    flex: 0.1;
+    display: flex;
+    color: dodgerblue;
+    max-height: 100%;
+    font-weight: 700;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.hideBtn {
+    display: none;
+}
+
+
+/* ===== MEDIA QUERIES=====*/
+@media screen and (max-width: 768px) {
+    .header {
+        height: calc(var(--header-height) + 0.2rem);
+        padding: 0 2rem 0 2rem;
+    }
+
+    .authenticated {
+        display: none;
+    }
+}

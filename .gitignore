@@ -1,0 +1,40 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# react items
+**/node_modules
+**/.eslintcache
+
+# django
+venv
+**/venv
+**/__pycache__
+**/env.py
+
+.env
+
+# since we want to show images present in the client folder, we specifically gitignore images in server folder only
+**/server/media
+**/server/static
