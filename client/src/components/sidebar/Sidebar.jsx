@@ -48,8 +48,11 @@ const Sidebar = () => {
         )}
         {userId && (
           <>
+            <Link to="/current-trip/" className={`${pathname}` === "/current-trip/" ? "sidebar-link active" : "sidebar-link"}>
+              <i className="bx bx-trip"></i> <span className="nav-name">Current Trip</span>
+            </Link>
             <Link to="/dashboard/" className={`${pathname}` === "/dashboard/" ? "sidebar-link active" : "sidebar-link"}>
-              <i className="bx bxs-dashboard"></i> <span className="nav-name">My Dashboard</span>
+              <i className="bx bxs-dashboard"></i> <span className="nav-name">Previous Trips</span>
             </Link>
             <Link to="/profile/" className={`${pathname}` === "/profile/" ? "sidebar-link active" : "sidebar-link"}>
               <i className="bx bxs-user"></i> <span className="nav-name">Profile</span>

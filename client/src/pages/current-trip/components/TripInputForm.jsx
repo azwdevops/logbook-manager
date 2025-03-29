@@ -7,7 +7,7 @@ import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
 import { showError } from "@/utils";
 
-const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip }) => {
+const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip, setCurrentTripDay }) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state?.auth?.user?.id);
@@ -37,6 +37,8 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
       trip_start_date: new Date().toISOString().split("T")[0],
       driver: userId,
       is_current: true,
+      start_time: new Date().toISOString(),
+      end_time: new Date().toISOString(),
     };
     await API.post(`/logbook/add-trip/`, body)
       .then((res) => {
@@ -47,7 +49,9 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
           currentCycle: "",
         });
         setCurrentTrip(res?.data?.current_trip_data);
+        setCurrentTripDay(res?.data?.trip_day_data);
         window.alert(res?.data?.message);
+        setOpenTripInputForm(false);
       })
       .catch((err) => showError(err))
       .finally(() => dispatch(toggleLoading(false)));

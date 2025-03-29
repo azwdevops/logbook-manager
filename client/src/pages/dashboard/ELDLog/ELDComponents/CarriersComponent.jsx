@@ -1,16 +1,16 @@
 import React from "react";
 
-const CarriersComponent = () => {
+const CarriersComponent = ({ total_miles_driving_today, mileage_covered_today }) => {
   return (
     <section class="carriers-info">
       <div class="left">
         <div class="total-miles">
           <div class="truck-miles-details">
-            <span>Display Box</span>
+            <span>{total_miles_driving_today}</span>
             <p>Total Miles Driving Today</p>
           </div>
           <div class="truck-miles-details">
-            <span>Display Box</span>
+            <span>{mileage_covered_today}</span>
             <p>Total Mileage Today</p>
           </div>
         </div>

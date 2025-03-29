@@ -8,10 +8,12 @@ import PrivateRoute from "@/utils/PrivateRoute";
 import NotFound from "@/pages/not-found/NotFound";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import API from "./utils/API";
-import { authSuccess } from "./redux/features/authSlice";
-import { toggleLoading } from "./redux/features/sharedSlice";
-import Dashboard from "./pages/dashboard/Dashboard";
+import API from "@/utils/API";
+import { authSuccess } from "@/redux/features/authSlice";
+import { toggleLoading } from "@/redux/features/sharedSlice";
+import Dashboard from "@/pages/dashboard/Dashboard";
+import Profile from "@/pages/profile/Profile";
+import CurrentTrip from "./pages/current-trip/CurrentTrip";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,7 +36,9 @@ function App() {
       {/* PRIVATE ROUTES */}
 
       <Route element={<PrivateRoute />}>
+        <Route exact path="/current-trip/" element={<CurrentTrip />} />
         <Route exact path="/dashboard/" element={<Dashboard />} />
+        <Route exact path="/profile/" element={<Profile />} />
       </Route>
       {/* PUBLIC ROUTES */}
       <Route path="*" element={<NotFound />} />

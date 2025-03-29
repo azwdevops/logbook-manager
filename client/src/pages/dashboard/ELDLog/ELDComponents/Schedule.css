@@ -1,43 +1,101 @@
-.cell-container {
+.grid-container {
+    display: grid;
+    grid-template-columns: 120px repeat(24, minmax(30px, 1fr));
+    /* Maintain equal width for cols 2-25 */
+    grid-auto-rows: 40px;
+    /* Fixed row height */
+    gap: 0;
     position: relative;
-    /* width: 100%; */
-    /* height: 100%; */
+    width: 100%;
+    max-width: 100vw;
+    /* Prevents overflow */
+    overflow-x: auto;
+    /* Allows scrolling if needed */
+    border: 1px solid black;
+    /* Outline for clarity */
 }
 
-.cell-input {
-    /* position: relative; */
-    /* width: 100%; */
-    /* height: 100%; */
-    /* text-align: center; */
+/* Time Labels Row */
+.time-row {
+    display: grid;
+    grid-template-columns: 120px repeat(24, minmax(30px, 1fr));
+    /* Ensures proper alignment */
+    height: 30px;
+    /* Slightly shorter than the main rows */
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #e0e0e0;
 }
 
-.horizontal-connection {
+.time-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    text-align: center;
+}
+
+/* Empty time label for the first column */
+.time-label:first-child {
+    background-color: transparent;
+    /* Empty space for row labels */
+    border: none;
+}
+
+/* General Grid Cells */
+.cell {
+    min-width: 30px;
+    /* Ensures consistency */
+    height: 40px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Label Cells (First Column) */
+.label-cell {
+    width: 120px;
+    height: 40px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+/* Dots inside cells */
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    border-radius: 50%;
     position: absolute;
-    height: 5px;
-    background-color: blue;
-    left: -5px;
-    right: 0;
-    min-width: 50px;
     top: 50%;
-    z-index: 1;
-}
-
-.vertical-connection {
-    position: absolute;
-    width: 5px;
-    background-color: blue;
-    top: -5px;
-    bottom: 0;
-    min-height: 60px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+/* Horizontal Line */
+.horizontal-line {
+    position: absolute;
+    height: 4px;
+    background-color: blue;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
     z-index: 1;
 }
 
-.cell-input.horizontal-line {
-    background-color: rgba(0, 0, 255, 0.1);
-}
-
-.cell-input.vertical-line {
-    background-color: rgba(255, 0, 0, 0.1);
+/* Vertical Line */
+.vertical-line {
+    position: absolute;
+    width: 4px;
+    background-color: blue;
+    left: 50%;
+    z-index: 1;
 }

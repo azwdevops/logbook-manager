@@ -13,26 +13,35 @@ import { useDispatch } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 
 const ELDLogUI = (props) => {
-  const { openELDLog, setOpenELDLog, selectedTripId } = props;
+  const { openELDLog, setOpenELDLog, selectedTripId, logbookIndex } = props;
 
   const [tripLogbook, setTripLogbook] = useState({});
 
-  const { trip_date, driver_initials, driver_number, pickup_location_name, dropoff_location_name } = tripLogbook;
+  const {
+    trip_date,
+    driver_initials,
+    driver_number,
+    pickup_location_name,
+    dropoff_location_name,
+    trip_items,
+    mileage_covered_today,
+    total_miles_driving_today,
+  } = tripLogbook;
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
       dispatch(toggleLoading(true));
-      await API.get(`/logbook/get-logbook-detail/${selectedTripId}/`)
+      await API.get(`/logbook/get-logbook-detail/${selectedTripId}/${logbookIndex}/`)
         .then((res) => {
-          setTripLogbook(res?.data?.trip_logbooks_data);
+          setTripLogbook(res?.data?.trip_day_data);
         })
         .catch((err) => showError(err))
         .finally(() => dispatch(toggleLoading(false)));
     };
     fetchData();
-  }, [dispatch, selectedTripId]);
+  }, [dispatch, selectedTripId, logbookIndex]);
 
   return (
     <CustomModal isOpen={openELDLog} maxWidth="1200px" maxHeight="800px">
@@ -44,10 +53,10 @@ const ELDLogUI = (props) => {
           pickup_location_name={pickup_location_name}
           dropoff_location_name={dropoff_location_name}
         />
-        <CarriersComponent />
+        <CarriersComponent mileage_covered_today={mileage_covered_today} total_miles_driving_today={total_miles_driving_today} />
         <br />
         <br />
-        <Schedule />
+        {trip_items && <Schedule scheduleItems={trip_items} />}
         <br />
         <Remarks />
         <br />

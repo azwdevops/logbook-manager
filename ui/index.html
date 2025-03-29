@@ -3,114 +3,167 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Drivers Daily Log</title>
+    <title>Dynamic Grid with Multi-Segment Rows</title>
+    <style>
+      .grid-container {
+        display: grid;
+        grid-template-columns: 120px repeat(24, 40px);
+        grid-template-rows: repeat(4, 40px);
+        gap: 0;
+        position: relative;
+      }
+      .cell {
+        width: 40px;
+        height: 40px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      .label-cell {
+        width: 120px;
+        height: 40px;
+        border: 1px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        background-color: #f0f0f0;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        background-color: black;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+      }
+      .horizontal-line {
+        position: absolute;
+        height: 4px;
+        background-color: blue;
+        top: 50%;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+      .vertical-line {
+        position: absolute;
+        width: 4px;
+        background-color: blue;
+        left: 50%;
+        z-index: 1;
+      }
+    </style>
   </head>
   <body>
-    <div class="daily-log">
-      <section class="title-section">
-        <div class="title-col">
-          <h3>Drivers Daily Log</h3>
-          <span>(24 Hours)</span>
-        </div>
-        <div class="title-col">
-          <p>Month / Day / Year</p>
-          <span>(month) (day) (year)</span>
-        </div>
-        <div class="title-col">
-          <h4>Original - file at home terminal.</h4>
-          <span>Duplicate: Driver retains in his/her possession for 8 days.</span>
-        </div>
-      </section>
+    <div class="grid-container"></div>
 
-      <section class="subtitle-section">
-        <div>
-          From:
-          <hr />
-        </div>
-        <div>
-          To:
-          <hr />
-        </div>
-      </section>
+    <script>
+      const rowLabels = ["Off Duty", "Sleeper Berth", "Driving", "On Duty (not driving)"];
 
-      <section class="carriers-info">
-        <div class="left">
-          <div class="total-miles">
-            <div class="truck-miles-details">
-              <span>Display Box</span>
-              <p>Total Miles Driving Today</p>
-            </div>
-            <div class="truck-miles-details">
-              <span>Display Box</span>
-              <p>Total Mileage Today</p>
-            </div>
-          </div>
-          <div class="truck-miles-details">
-            <span>Display Box</span>
-            <p>Truck/Tractor and Trailer Numbers or License Plate(s)/State (show each unit)</p>
-          </div>
-        </div>
-        <div class="right">
-          <div>
-            <span>Names here</span>
-            <hr />
-            <p>Name of Carrier or Carriers</p>
-          </div>
-          <div>
-            <span>Main Address here</span>
-            <hr />
-            <p>Main Office Address</p>
-          </div>
-          <div>
-            <span>terminal address here</span>
-            <hr />
-            <p>Home Terminal Address</p>
-          </div>
-        </div>
-      </section>
-      <br />
-      <table class="schedule" rules="all" border="1">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Mid-Night</th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
-            <th>8</th>
-            <th>9</th>
-            <th>10</th>
-            <th>11</th>
-            <th>Noon</th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
-            <th>8</th>
-            <th>9</th>
-            <th>10</th>
-            <th>11</th>
-            <th>Mid-Night</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="schedule-item">
-            <th>1. Off Duty</th>
-            <th>2. Sleeper Berth</th>
-            <th>3. Driving</th>
-            <th>4. On Duty (Not Driving)</th>
-          </tr>
-          {}
-        </tbody>
-      </table>
-    </div>
+      async function fetchRowsFromAPI() {
+        return {
+          1: [
+            { start: 3, end: 9, nextRow: 4 },
+            { start: 16, end: 18, nextRow: 4 },
+            { start: 22, end: 23, nextRow: null },
+          ],
+          2: [
+            { start: 12, end: 13, nextRow: 3 },
+            { start: 20, end: 22, nextRow: 1 },
+          ],
+          3: [
+            { start: 10, end: 12, nextRow: 2 },
+            { start: 13, end: 14, nextRow: 4 },
+          ],
+          4: [
+            { start: 9, end: 10, nextRow: 3 },
+            { start: 14, end: 16, nextRow: 1 },
+            { start: 18, end: 20, nextRow: 2 },
+          ],
+        };
+      }
+
+      async function renderGrid() {
+        const rowsConfig = await fetchRowsFromAPI();
+        const gridContainer = document.querySelector(".grid-container");
+        gridContainer.innerHTML = "";
+
+        const rows = 4;
+        const cols = 24;
+
+        for (let row = 1; row <= rows; row++) {
+          let labelCell = document.createElement("div");
+          labelCell.className = "label-cell";
+          labelCell.textContent = rowLabels[row - 1];
+          gridContainer.appendChild(labelCell);
+
+          for (let col = 1; col <= cols; col++) {
+            let cell = document.createElement("div");
+            cell.className = "cell";
+
+            let segment = rowsConfig[row]?.find((seg) => seg.start === col || seg.end === col);
+            if (segment) {
+              let dot = document.createElement("div");
+              dot.className = "dot";
+              cell.appendChild(dot);
+            }
+
+            if (rowsConfig[row]) {
+              let currentSegment = rowsConfig[row].find((seg) => seg.start === col);
+              if (currentSegment) {
+                let line = document.createElement("div");
+                line.className = "horizontal-line";
+                line.style.left = "50%";
+                cell.appendChild(line);
+              }
+
+              currentSegment = rowsConfig[row].find((seg) => seg.end === col);
+              if (currentSegment) {
+                let line = document.createElement("div");
+                line.className = "horizontal-line";
+                line.style.right = "50%";
+                cell.appendChild(line);
+
+                if (currentSegment.nextRow !== null) {
+                  let vLine = document.createElement("div");
+                  vLine.className = "vertical-line";
+
+                  let nextRow = currentSegment.nextRow;
+                  let rowDiff = nextRow - row;
+
+                  if (rowDiff > 0) {
+                    vLine.style.top = "50%";
+                    vLine.style.height = `${rowDiff * 100}%`;
+                  } else {
+                    vLine.style.top = "auto";
+                    vLine.style.bottom = "50%";
+                    vLine.style.height = `${-rowDiff * 100}%`;
+                  }
+
+                  cell.appendChild(vLine);
+                }
+              }
+            }
+
+            if (rowsConfig[row]?.some((seg) => seg.start < col && col < seg.end)) {
+              let line = document.createElement("div");
+              line.className = "horizontal-line";
+              cell.appendChild(line);
+            }
+
+            gridContainer.appendChild(cell);
+          }
+        }
+      }
+
+      renderGrid();
+    </script>
   </body>
 </html>

@@ -1,14 +1,25 @@
 from django.contrib.admin import register, ModelAdmin
 
-from logbook.models import TripDetail, TripItem
+from logbook.models import TripDetail, TripItem, TripDay, StopRest
 
 
 @register(TripDetail)
 class TripDetailAdmin(ModelAdmin):
-    list_display = ("trip_start_date", "trip_end_date", "driver", "pickup_location", "is_done", "is_current")
-    list_editable = ("is_done", "is_current")
+    list_display = ("id", "trip_start_date", "trip_end_date", "driver", "pickup_location", "is_done", "is_current")
+    list_editable = ("trip_start_date", "is_done", "is_current")
+
+
+@register(TripDay)
+class TripDayAdmin(ModelAdmin):
+    list_display = ("trip_date", "is_current")
 
 
 @register(TripItem)
 class TripItemAdmin(ModelAdmin):
-    list_display = ("item_type", "start_time", "end_time")
+    list_display = ("item_type", "start_time", "end_time", "is_current")
+    list_editable = ("start_time", "end_time")
+
+
+@register(StopRest)
+class StopRestAdmin(ModelAdmin):
+    list_display = ("trip_day", "stop_type", "start_time", "stop_location")

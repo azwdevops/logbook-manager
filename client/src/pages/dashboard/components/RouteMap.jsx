@@ -1,44 +1,72 @@
-import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polyline, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import CustomModal from "@/components/shared/CustomModal";
+import { useDispatch } from "react-redux";
+import { toggleLoading } from "@/redux/features/sharedSlice";
+import API from "@/utils/API";
+import { showError } from "@/utils";
 
-const RouteMap = () => {
-  // Static route coordinates (Example: New York to Los Angeles)
-  const routeCoordinates = [
-    [40.7128, -74.006], // New York
-    [41.8781, -87.6298], // Chicago
-    [39.7392, -104.9903], // Denver
-    [36.1699, -115.1398], // Las Vegas
-    [34.0522, -118.2437], // Los Angeles
-  ];
+const RouteMap = ({ openRouteMap, setOpenRouteMap, selectedTripId }) => {
+  const dispatch = useDispatch();
+  const [routeMapData, setRouteMapData] = useState([]);
+  const [middleIndex, setMiddleIndex] = useState(0);
 
-  const stops = [
-    { location: [41.8781, -87.6298], name: "Rest Stop - Chicago" },
-    { location: [39.7392, -104.9903], name: "Refuel - Denver" },
-    { location: [36.1699, -115.1398], name: "Rest Stop - Las Vegas" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch(toggleLoading(true));
+      try {
+        const response = await API.get(`/logbook/get-trip-route/${selectedTripId}/`);
+        const data = response?.data?.route_map_data || {};
+        setRouteMapData(data?.trip_stops || []);
+        setMiddleIndex(data?.middle_index || 0);
+      } catch (error) {
+        showError(error);
+      } finally {
+        dispatch(toggleLoading(false));
+      }
+    };
+    fetchData();
+  }, [selectedTripId, dispatch]);
+
+  // Get middle stop for centering the map
+  const middleStop = routeMapData[middleIndex]?.stop_location?.coords || { lat: 39.8283, lng: -98.5795 };
 
   return (
-    <Card sx={{ mt: 4, p: 3 }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Route Map
-        </Typography>
-        <Typography variant="body2" gutterBottom>
-          The map below shows the planned route along with key rest stops and refueling locations.
-        </Typography>
-        <MapContainer center={[39.8283, -98.5795]} zoom={4} style={{ height: "400px", width: "100%" }}>
+    <CustomModal isOpen={openRouteMap}>
+      <div className="dialog">
+        <h3>Route Map</h3>
+        <p className="tc">The map below shows the trip route including stops.</p>
+        <br />
+        <MapContainer center={[middleStop.lat, middleStop.lng]} zoom={5} style={{ height: "70vh", width: "100%" }} scrollWheelZoom={false}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <Polyline positions={routeCoordinates} color="blue" />
-          {stops.map((stop, index) => (
-            <Marker key={index} position={stop.location}>
-              <Popup>{stop.name}</Popup>
-            </Marker>
-          ))}
+
+          {/* Draw route polyline */}
+          <Polyline
+            positions={routeMapData.map((stop) => [stop?.stop_location?.coords?.lat, stop?.stop_location?.coords?.lng])}
+            color="blue"
+          />
+
+          {/* Markers for stops */}
+          {routeMapData.map((stop, index) => {
+            const { stop_location } = stop;
+            const stopName = stop_location?.name?.split(",")[0]; // Extract first part of the name
+            const coords = stop_location?.coords;
+            return (
+              <Marker key={index} position={[coords?.lat, coords?.lng]}>
+                <Popup>{stopName}</Popup>
+              </Marker>
+            );
+          })}
         </MapContainer>
-      </CardContent>
-    </Card>
+
+        <div className="form-buttons">
+          <button type="button" onClick={() => setOpenRouteMap(false)}>
+            Close
+          </button>
+        </div>
+      </div>
+    </CustomModal>
   );
 };
 

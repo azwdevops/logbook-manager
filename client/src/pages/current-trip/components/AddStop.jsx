@@ -10,10 +10,8 @@ import { showError } from "@/utils";
 
 const stopTypes = ["Pickup", "Dropoff", "Fueling", "Rest"];
 
-const AddStop = ({ openAddStop, setOpenAddStop, currentTrip }) => {
+const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
   const dispatch = useDispatch();
-
-  const [stopRecorded, setStopRecorded] = useState(false);
 
   const [stop, setStop] = useState({
     type: "",
@@ -79,7 +77,7 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTrip }) => {
     dispatch(toggleLoading(true));
     const body = {
       stop_location: { coords: stop.coords, name: stop.location },
-      trip_detail: currentTrip.id,
+      trip_day: currentTripDay.id,
       stop_type: stop.type,
       start_time: stop.startTime,
       end_time: stop.endTime,

@@ -29,9 +29,18 @@ class TripDetail(Model):
 class TripDay(Model):
     trip_detail = ForeignKey(TripDetail, on_delete=PROTECT, null=True, blank=True)
     trip_date = DateField()
-    mileage_covered = FloatField(default=0)
+    # mileage covered today by the logged in driver
+    total_miles_driving_today = FloatField(default=0)
+    # overall miles covered today including those from co-drivers
+    mileage_covered_today = FloatField(default=0)
     is_current = BooleanField(default=False)
     is_done = BooleanField(default=False)
+
+    class Meta:
+        unique_together = ("trip_detail", "trip_date")
+
+    def to_str(self):
+        return f"{self.trip_date}"
 
 
 class StopRest(Model):
