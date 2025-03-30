@@ -73,3 +73,15 @@ export const showError = (err) => {
     }
   }
 };
+
+// Function to get location name using reverse geocoding
+export const fetchLocationName = async (lat, lng) => {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await response.json();
+    return data.display_name || "Unknown Location";
+  } catch (error) {
+    console.error("Reverse geocoding failed:", error);
+    return "Unknown Location";
+  }
+};

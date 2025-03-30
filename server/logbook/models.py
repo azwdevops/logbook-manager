@@ -35,6 +35,7 @@ class TripDay(Model):
     mileage_covered_today = FloatField(default=0)
     is_current = BooleanField(default=False)
     is_done = BooleanField(default=False)
+    truck_trailer_number = CharField(max_length=255, null=True)
 
     class Meta:
         unique_together = ("trip_detail", "trip_date")

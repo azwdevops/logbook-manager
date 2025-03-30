@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LocationMap from "./LocationMap";
 import CustomModal from "@/components/shared/CustomModal";
 import LocationSearch from "./LocationSearch"; // New component
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
-import { showError } from "@/utils";
+import { fetchLocationName, showError } from "@/utils";
 
 const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip, setCurrentTripDay }) => {
   const dispatch = useDispatch();
@@ -18,6 +18,21 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
     currentLocation: { name: "", coords: null },
     currentCycle: "",
   });
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const locationName = await fetchLocationName(latitude, longitude);
+
+        setTripDetails((prev) => ({
+          ...prev,
+          currentLocation: { name: locationName, coords: { lat: latitude, lng: longitude } },
+        }));
+      },
+      () => console.log("Unable to fetch location")
+    );
+  }, []);
 
   const handleLocationSelect = (field, name, coords) => {
     setTripDetails((prev) => ({
@@ -61,9 +76,14 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
     <CustomModal isOpen={openTripInputForm} maxWidth="1200px" maxHeight="900px">
       <form className="dialog" onSubmit={handleSubmit}>
         <h3>Enter Trip Details</h3>
+        <p className="bd">
+          Your Current Location: <span className="green">{tripDetails?.currentLocation?.name}</span>
+        </p>
         <div className="dialog-row">
           <span>
-            <label>Current Location</label>
+            <label>
+              Current Location <span className="green">(If different from above location)</span>
+            </label>
             <LocationSearch
               value={tripDetails.currentLocation.name}
               onSelect={(name, coords) => handleLocationSelect("currentLocation", name, coords)}

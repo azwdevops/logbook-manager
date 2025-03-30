@@ -1,13 +1,17 @@
 from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
 
 from users.api.serializers import UserSerializer, UserViewSerializer
-from core.exceptions import MissingItemError
+from core.exceptions import MissingItemError, RequestFailedError
+from core.utils import get_object_or_none
+from users.models import User
 
 
 class UserSignup(APIView):
@@ -55,11 +59,33 @@ class UserLogout(APIView):
         return Response(status=200)
 
 
-class UserView(APIView):
+class MaintainUser(APIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (SessionAuthentication,)
-    ##
+
+    @transaction.atomic
+    def patch(self, request):
+        user = get_object_or_none(User, id=request.data["id"])
+        if not user:
+            raise MissingItemError("Error, invalid user account", status_code=400)
+        serializer = UserSerializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"message": "User updated successfully"}, status=200)
 
     def get(self, request):
         serializer = UserViewSerializer(request.user)
         return Response({"user_data": serializer.data}, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def change_password(request):
+    if not check_password(request.data["old_password"], request.user.password):
+        raise RequestFailedError("Old password entered is incorrect", status_code=400)
+    request.user.set_password(request.data["new_password"])
+    request.user.save()
+
+    return Response({"message": "Password changed successfully"}, status=200)

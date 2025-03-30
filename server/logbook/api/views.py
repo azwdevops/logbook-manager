@@ -35,7 +35,12 @@ def add_trip(request):
 
     # create a new trip day
     trip_day_serializer = TripDaySerializer(
-        data={"trip_detail": new_trip.id, "trip_date": request.data["trip_start_date"], "is_current": True}
+        data={
+            "trip_detail": new_trip.id,
+            "trip_date": request.data["trip_start_date"],
+            "is_current": True,
+            "truck_trailer_number": request.user.truck_trailer_number,
+        }
     )
     trip_day_serializer.is_valid(raise_exception=True)
     new_trip_day = trip_day_serializer.save()
@@ -152,7 +157,7 @@ def get_logbook_detail(request, tripId, logbookIndex):
     trip_day = get_object_or_none(TripDay, trip_detail=trip, trip_date=trip_date)
     if not trip_day:
         raise MissingItemError("Error, invalid logbook selected.")
-    trip_day_data = TripDayLogbookView(trip_day).data
+    trip_day_data = TripDayLogbookView(trip_day, context={"request_user": request.user}).data
 
     return Response({"message": "success", "trip_day_data": trip_day_data}, status=200)
 
@@ -193,7 +198,12 @@ def start_trip_day(request):
         )
     # create a new trip day
     trip_day_serializer = TripDaySerializer(
-        data={"trip_detail": request.data["trip_detail_id"], "trip_date": request.data["trip_date"], "is_current": True}
+        data={
+            "trip_detail": request.data["trip_detail_id"],
+            "trip_date": request.data["trip_date"],
+            "is_current": True,
+            "truck_trailer_number": request.user.truck_trailer_number,
+        }
     )
     trip_day_serializer.is_valid(raise_exception=True)
     new_trip_day = trip_day_serializer.save()

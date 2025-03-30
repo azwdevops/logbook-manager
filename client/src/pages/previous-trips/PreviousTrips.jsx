@@ -7,13 +7,13 @@ import { showError } from "@/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 
-import "./Dashboard.css";
+import "./PreviousTrips.css";
 import ELDLogUI from "./ELDLog/ELDLogUI";
 
 import RouteMap from "./components/RouteMap";
 import TripSummary from "./components/TripSummary";
 
-const Dashboard = () => {
+const PreviousTrips = () => {
   const loading = useSelector((state) => state?.shared?.loading);
 
   const [recentTrips, setRecentTrips] = useState([]);
@@ -119,4 +119,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default PreviousTrips;

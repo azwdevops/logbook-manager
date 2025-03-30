@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 import API from "@/utils/API";
 import { authSuccess } from "@/redux/features/authSlice";
 import { toggleLoading } from "@/redux/features/sharedSlice";
-import Dashboard from "@/pages/dashboard/Dashboard";
+import PreviousTrips from "@/pages/previous-trips/PreviousTrips";
 import Profile from "@/pages/profile/Profile";
 import CurrentTrip from "./pages/current-trip/CurrentTrip";
 
@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      await API.get(`/users/get-user/`)
+      await API.get(`/users/maintain-user/`)
         .then((res) => {
           dispatch(authSuccess(res.data.user_data));
         })
@@ -37,7 +37,7 @@ function App() {
 
       <Route element={<PrivateRoute />}>
         <Route exact path="/current-trip/" element={<CurrentTrip />} />
-        <Route exact path="/dashboard/" element={<Dashboard />} />
+        <Route exact path="/previous-trips/" element={<PreviousTrips />} />
         <Route exact path="/profile/" element={<Profile />} />
       </Route>
       {/* PUBLIC ROUTES */}

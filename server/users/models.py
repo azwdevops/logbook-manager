@@ -1,4 +1,4 @@
-from django.db import models
+from django.db.models import AutoField, EmailField, CharField, BooleanField, DateTimeField
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 
@@ -30,17 +30,18 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.AutoField(primary_key=True)
-    email = models.EmailField(max_length=100, unique=True, null=True, blank=True, db_collation="case_insensitive")
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
-    driver_number = models.CharField(max_length=100, unique=True, db_collation="case_insensitive")
-    driver_initials = models.CharField(max_length=100)
-    is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="last login", auto_now=True)
+    id = AutoField(primary_key=True)
+    email = EmailField(max_length=100, unique=True, null=True, blank=True, db_collation="case_insensitive")
+    first_name = CharField(max_length=50, null=True)
+    last_name = CharField(max_length=50, null=True)
+    driver_number = CharField(max_length=100, unique=True, db_collation="case_insensitive")
+    driver_initials = CharField(max_length=100)
+    is_admin = BooleanField(default=False)
+    is_active = BooleanField(default=True)
+    is_staff = BooleanField(default=False)
+    created_at = DateTimeField(auto_now_add=True)
+    last_login = DateTimeField(verbose_name="last login", auto_now=True)
+    truck_trailer_number = CharField(max_length=255, null=True)
 
     USERNAME_FIELD = "email"
 

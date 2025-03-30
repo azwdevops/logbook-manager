@@ -26,6 +26,11 @@ const ELDLogUI = (props) => {
     trip_items,
     mileage_covered_today,
     total_miles_driving_today,
+    truck_trailer_number,
+    on_duty_hours,
+    on_duty_hours_last_seven_days,
+    on_duty_hours_last_five_days,
+    on_duty_hours_last_eight_days,
   } = tripLogbook;
 
   const dispatch = useDispatch();
@@ -53,14 +58,23 @@ const ELDLogUI = (props) => {
           pickup_location_name={pickup_location_name}
           dropoff_location_name={dropoff_location_name}
         />
-        <CarriersComponent mileage_covered_today={mileage_covered_today} total_miles_driving_today={total_miles_driving_today} />
+        <CarriersComponent
+          mileage_covered_today={mileage_covered_today}
+          total_miles_driving_today={total_miles_driving_today}
+          truck_trailer_number={truck_trailer_number}
+        />
         <br />
         <br />
         {trip_items && <Schedule scheduleItems={trip_items} />}
         <br />
         <Remarks />
         <br />
-        <Recap />
+        <Recap
+          on_duty_hours={on_duty_hours}
+          on_duty_hours_last_seven_days={on_duty_hours_last_seven_days}
+          on_duty_hours_last_five_days={on_duty_hours_last_five_days}
+          on_duty_hours_last_eight_days={on_duty_hours_last_eight_days}
+        />
         <div className="form-buttons">
           <button type="button" onClick={() => setOpenELDLog(false)}>
             Close

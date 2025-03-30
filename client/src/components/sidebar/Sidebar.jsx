@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 import API from "@/utils/API";
-import { logoutUser } from "@/redux/features/authSlice";
+import { logoutUser, toggleLogin, toggleSignup } from "@/redux/features/authSlice";
 import { showError } from "@/utils";
 
 const Sidebar = () => {
@@ -33,13 +33,13 @@ const Sidebar = () => {
         {!userId && (
           <>
             <Link to="#" className={`sidebar-link ${pathname === "/revision/" && "active"}`}>
-              <div className="main-link">
+              <div className="main-link" onClick={() => dispatch(toggleSignup(true))}>
                 <i className="bx bx-user-plus"></i>
                 <span>Signup</span>
               </div>
             </Link>
             <Link to="#" className={`sidebar-link ${pathname === "/revision/" && "active"}`}>
-              <div className="main-link">
+              <div className="main-link" onClick={() => dispatch(toggleLogin(true))}>
                 <i class="bx bx-log-in"></i>
                 <span>Login</span>
               </div>
@@ -51,7 +51,7 @@ const Sidebar = () => {
             <Link to="/current-trip/" className={`${pathname}` === "/current-trip/" ? "sidebar-link active" : "sidebar-link"}>
               <i className="bx bx-trip"></i> <span className="nav-name">Current Trip</span>
             </Link>
-            <Link to="/dashboard/" className={`${pathname}` === "/dashboard/" ? "sidebar-link active" : "sidebar-link"}>
+            <Link to="/previous-trips/" className={`${pathname}` === "/previous-trips/" ? "sidebar-link active" : "sidebar-link"}>
               <i className="bx bxs-dashboard"></i> <span className="nav-name">Previous Trips</span>
             </Link>
             <Link to="/profile/" className={`${pathname}` === "/profile/" ? "sidebar-link active" : "sidebar-link"}>

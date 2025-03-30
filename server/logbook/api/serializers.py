@@ -1,7 +1,8 @@
 from collections import defaultdict
+from datetime import timedelta
 
 from django.utils.timezone import now, localtime
-from django.db.models import Sum
+from django.db.models import Sum, F, ExpressionWrapper, DurationField
 
 from rest_framework.serializers import ModelSerializer
 
@@ -109,15 +110,25 @@ class StopRestSerializer(ModelSerializer):
 class TripDayLogbookView(ModelSerializer):
     class Meta:
         model = TripDay
-        fields = ("id", "trip_date", "total_miles_driving_today", "mileage_covered_today")
+        fields = ("id", "trip_date", "total_miles_driving_today", "mileage_covered_today", "truck_trailer_number")
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["driver_number"] = instance.trip_detail.driver.driver_number
-        data["driver_initials"] = instance.trip_detail.driver.driver_initials
-        data["pickup_location_name"] = instance.trip_detail.pickup_location["name"]
-        data["dropoff_location_name"] = instance.trip_detail.dropoff_location["name"]
-        data["trip_items"] = self.get_trip_day_items(instance.id)
+    def to_representation(self, trip_day):
+        data = super().to_representation(trip_day)
+        data["driver_number"] = trip_day.trip_detail.driver.driver_number
+        data["driver_initials"] = trip_day.trip_detail.driver.driver_initials
+        data["pickup_location_name"] = trip_day.trip_detail.pickup_location["name"]
+        data["dropoff_location_name"] = trip_day.trip_detail.dropoff_location["name"]
+        data["trip_items"] = self.get_trip_day_items(trip_day.id)
+        data["on_duty_hours"] = self.get_on_duty_hours_today(trip_day)
+        data["on_duty_hours_last_seven_days"] = self.get_on_duty_hours_last_number_of_days(
+            self.context.get("request_user"), 7
+        )
+        data["on_duty_hours_last_five_days"] = self.get_on_duty_hours_last_number_of_days(
+            self.context.get("request_user"), 5
+        )
+        data["on_duty_hours_last_eight_days"] = self.get_on_duty_hours_last_number_of_days(
+            self.context.get("request_user"), 8
+        )
 
         return data
 
@@ -161,15 +172,46 @@ class TripDayLogbookView(ModelSerializer):
 
         return sorted_grouped_items
 
+    def get_on_duty_hours_today(self, trip_day):
+        # Filter only the relevant trip items
+        on_duty_items = trip_day.tripitem_set.filter(item_type__in=["driving", "on-duty-not-driving"])
+
+        # Annotate and sum the duration (end_time - start_time)
+        total_duration = on_duty_items.aggregate(
+            total=Sum(ExpressionWrapper(F("end_time") - F("start_time"), output_field=DurationField()))
+        )["total"]
+
+        # Convert duration to hours if not None, otherwise return 0
+        return round(total_duration.total_seconds() / 3600, 2) if total_duration else 0
+
+    def get_on_duty_hours_last_number_of_days(self, request_user, number_of_days):
+        # Define the time range (last n days)
+        n_days_ago = now() - timedelta(days=number_of_days)
+
+        # Filter only the relevant trip items for the past week
+        on_duty_items = TripItem.objects.filter(
+            trip_day__trip_detail__driver=request_user,
+            item_type__in=["driving", "on-duty-not-driving"],
+            end_time__gte=n_days_ago,  # Ensures all included items have a valid end_time)
+        )
+
+        # Annotate and sum the duration (end_time - start_time)
+        total_duration = on_duty_items.aggregate(
+            total=Sum(ExpressionWrapper(F("end_time") - F("start_time"), output_field=DurationField()))
+        )["total"]
+
+        # Convert duration to hours if not None, otherwise return 0
+        return round(total_duration.total_seconds() / 3600, 2) if total_duration else 0
+
 
 class TripRouteViewSerializer(ModelSerializer):
     class Meta:
         model = TripDetail
         fields = ("id",)
 
-    def to_representation(self, instance):
-        stop_rests = StopRest.objects.filter(trip_day__trip_detail=instance).order_by("start_time")
-        data = super().to_representation(instance)
+    def to_representation(self, trip_detail):
+        stop_rests = StopRest.objects.filter(trip_day__trip_detail=trip_detail).order_by("start_time")
+        data = super().to_representation(trip_detail)
         data["trip_stops"] = stop_rests.values("start_time", "stop_location")
         data["middle_index"] = stop_rests.count() // 2
         return data
@@ -183,15 +225,17 @@ class TripSummaryViewSerializer(ModelSerializer):
             "cycle_used",
         )
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["starting_location_name"] = instance.current_location["name"]
-        data["pickup_location_name"] = instance.pickup_location["name"]
-        data["dropoff_location_name"] = instance.dropoff_location["name"]
-        data["trip_mileage"] = instance.tripday_set.aggregate(mileage_sum=Sum("mileage_covered_today"))["mileage_sum"]
-        data["trip_days_count"] = instance.tripday_set.count()
+    def to_representation(self, trip_detail):
+        data = super().to_representation(trip_detail)
+        data["starting_location_name"] = trip_detail.current_location["name"]
+        data["pickup_location_name"] = trip_detail.pickup_location["name"]
+        data["dropoff_location_name"] = trip_detail.dropoff_location["name"]
+        data["trip_mileage"] = trip_detail.tripday_set.aggregate(mileage_sum=Sum("mileage_covered_today"))[
+            "mileage_sum"
+        ]
+        data["trip_days_count"] = trip_detail.tripday_set.count()
         data["stops"] = (
-            StopRest.objects.filter(trip_day__trip_detail=instance)
+            StopRest.objects.filter(trip_day__trip_detail=trip_detail)
             .order_by("start_time")
             .values("id", "stop_location", "start_time", "end_time", "stop_type")
         )
