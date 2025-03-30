@@ -12,6 +12,8 @@ import { showError } from "@/utils";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
 import moment from "moment";
+import TripSummary from "../previous-trips/components/TripSummary";
+import CurrentTripRouteMap from "./components/CurrentTripRouteMap";
 
 const CurrentTrip = () => {
   const dispatch = useDispatch();
@@ -26,6 +28,8 @@ const CurrentTrip = () => {
 
   const [openAddStop, setOpenAddStop] = useState(false);
   const [openChangeStatus, setOpenChangeStatus] = useState(false);
+  const [openTripSummary, setOpenTripSummary] = useState(false);
+  const [openCurrentTripRouteMap, setOpenCurrentTripRouteMap] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,14 +107,19 @@ const CurrentTrip = () => {
                 <th>Date</th>
                 <th>Pickup Location</th>
                 <th>Dropoff Location</th>
+                <th>View Route Map</th>
                 <th>Add Stop</th>
                 <th>Trip Status</th>
+                <th>Trip Summary</th>
                 <th>End Trip</th>
               </tr>
               <tr>
                 <td>{moment(currentTrip?.trip_start_date).format("LL")}</td>
-                <td>{currentTrip?.pickup_location_name}</td>
-                <td>{currentTrip?.dropoff_location_name}</td>
+                <td>{currentTrip?.pickup_location?.name}</td>
+                <td>{currentTrip?.dropoff_location?.name}</td>
+                <td className="button-span" onClick={() => setOpenCurrentTripRouteMap(true)}>
+                  View Route Map
+                </td>
                 <td className="button-span">
                   {currentTripDay ? <span onClick={() => setOpenAddStop(true)}>Add Stop</span> : <span className="red">N/A</span>}
                 </td>
@@ -128,6 +137,9 @@ const CurrentTrip = () => {
                   ) : (
                     <span className="red bd">N/A</span>
                   )}
+                </td>
+                <td className="button-span" onClick={() => setOpenTripSummary(true)}>
+                  Trip Summary
                 </td>
                 <td className="button-span" onClick={() => handleEndTrip()}>
                   End Trip
@@ -194,6 +206,17 @@ const CurrentTrip = () => {
           setOpenTripInputForm={setOpenTripInputForm}
           setCurrentTrip={setCurrentTrip}
           setCurrentTripDay={setCurrentTripDay}
+        />
+      )}
+      {openTripSummary && (
+        <TripSummary openTripSummary={openTripSummary} setOpenTripSummary={setOpenTripSummary} selectedTripId={currentTrip?.id} />
+      )}
+
+      {openCurrentTripRouteMap && (
+        <CurrentTripRouteMap
+          openCurrentTripRouteMap={openCurrentTripRouteMap}
+          setOpenCurrentTripRouteMap={setOpenCurrentTripRouteMap}
+          currentTrip={currentTrip}
         />
       )}
     </>

@@ -26,7 +26,7 @@ class TripDetailSerializer(ModelSerializer):
 class TripDaySerializer(ModelSerializer):
     class Meta:
         model = TripDay
-        fields = ("trip_detail", "trip_date", "is_current")
+        fields = ("trip_detail", "trip_date", "is_current", "truck_trailer_number")
 
 
 class TripDayViewSerializer(ModelSerializer):
@@ -55,13 +55,11 @@ class MultipleTripDetailViewSerializer(ModelSerializer):
 class SingleTripDetailViewSerializer(ModelSerializer):
     class Meta:
         model = TripDetail
-        fields = ("id", "trip_start_date")
+        fields = ("id", "trip_start_date", "current_location", "pickup_location", "dropoff_location")
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         active_trip_days = instance.tripday_set.filter(is_current=True)
-        data["pickup_location_name"] = instance.pickup_location["name"]
-        data["dropoff_location_name"] = instance.dropoff_location["name"]
 
         if active_trip_days.exists():
             current_trip_day = active_trip_days[0]

@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import TitleComponent from "./ELDComponents/TitleComponent";
+import React, { useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
+
+import TitleComponent from "./components/TitleComponent";
 
 import "./ELDLogUI.css";
-import CarriersComponent from "./ELDComponents/CarriersComponent";
-import Schedule from "./ELDComponents/Schedule";
-import Remarks from "./ELDComponents/Remarks";
-import Recap from "./ELDComponents/Recap";
+import CarriersComponent from "./components/CarriersComponent";
+import Schedule from "./components/Schedule";
+import Remarks from "./components/Remarks";
+import Recap from "./components/Recap";
 import CustomModal from "@/components/shared/CustomModal";
 import API from "@/utils/API";
 import { showError } from "@/utils";
@@ -14,6 +16,8 @@ import { toggleLoading } from "@/redux/features/sharedSlice";
 
 const ELDLogUI = (props) => {
   const { openELDLog, setOpenELDLog, selectedTripId, logbookIndex } = props;
+
+  const printArea = useRef(null);
 
   const [tripLogbook, setTripLogbook] = useState({});
 
@@ -48,9 +52,13 @@ const ELDLogUI = (props) => {
     fetchData();
   }, [dispatch, selectedTripId, logbookIndex]);
 
+  const handlePrint = useReactToPrint({
+    contentRef: printArea,
+  });
+
   return (
     <CustomModal isOpen={openELDLog} maxWidth="1200px" maxHeight="800px">
-      <div className="daily-log dialog">
+      <div ref={printArea} className="daily-log">
         <TitleComponent
           trip_date={trip_date}
           driver_initials={driver_initials}
@@ -75,11 +83,14 @@ const ELDLogUI = (props) => {
           on_duty_hours_last_five_days={on_duty_hours_last_five_days}
           on_duty_hours_last_eight_days={on_duty_hours_last_eight_days}
         />
-        <div className="form-buttons">
-          <button type="button" onClick={() => setOpenELDLog(false)}>
-            Close
-          </button>
-        </div>
+      </div>
+      <div className="daily-log-buttons">
+        <button type="button" onClick={() => setOpenELDLog(false)}>
+          Close
+        </button>
+        <button type="button" onClick={() => handlePrint()}>
+          Print/PDF
+        </button>
       </div>
     </CustomModal>
   );

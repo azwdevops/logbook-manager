@@ -1,13 +1,8 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-
 .daily-log {
-    max-width: 1000px;
     margin: auto;
     font-size: 0.9rem;
+    padding-bottom: 6rem !important;
+    margin-bottom: 6rem !important;
 }
 
 .title-section {
@@ -159,4 +154,26 @@
     text-align: center;
     font-size: 0.8rem;
     padding: 5px 10px;
+}
+
+.daily-log-buttons {
+    position: sticky;
+    bottom: 0px;
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+.daily-log-buttons {
+    button:nth-child(1) {
+        background: linear-gradient(to right, rgb(243, 2, 2), rgb(223, 39, 161));
+        justify-self: start;
+    }
+}
+
+.daily-log-buttons {
+    button:nth-child(2) {
+        background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+        justify-self: end;
+    }
 }

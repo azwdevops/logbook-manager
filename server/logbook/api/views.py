@@ -118,8 +118,11 @@ def record_stop(request):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def end_trip(request):
-    if request.data["current_trip_item_id"]:
+    try:
         TripItem.objects.filter(id=request.data["current_trip_item_id"]).update(end_time=now(), is_current=False)
+    except:
+        pass
+
     trip = get_object_or_none(TripDetail, id=request.data["tripId"])
     if not trip:
         raise MissingItemError("Error, invalid trip submitted", status_code=400)

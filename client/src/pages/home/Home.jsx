@@ -16,8 +16,8 @@ const Home = () => {
         <h1>Your Trucking Logbook Solution</h1>
         <p>Manage your logbooks as a trucking driver</p>
         {userId && (
-          <Link to="/dashboard/" className="add-button">
-            My Dashboard
+          <Link to="/previous-trips/" className="add-button">
+            My Trips
           </Link>
         )}
         {!userId && (
