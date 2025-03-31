@@ -1,5 +1,5 @@
 export default {
-  liveProduction: false,
-  productionHome: "http://",
+  liveProduction: true,
+  productionHome: "https://logbookmanager.devzask.com",
   devHome: "http://localhost:8000",
 };
