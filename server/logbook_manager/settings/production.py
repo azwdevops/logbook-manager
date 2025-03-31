@@ -1,7 +1,7 @@
 DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = [".vercel.app", ".now.sh"]
+CSRF_TRUSTED_ORIGINS = ["https://logbookmanager.devzask.com"]
 
-ALLOWED_HOSTS = [".vercel.app", ".now.sh"]
+ALLOWED_HOSTS = ["logbookmanager.devzask.com"]
 
-CORS_ALLOWED_ORIGINS = [".vercel.app", ".now.sh"]
+CORS_ALLOWED_ORIGINS = ["https://logbookmanager.devzask.com"]
