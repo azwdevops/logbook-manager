@@ -1,5 +1,5 @@
 export default {
   liveProduction: false,
-  productionHome: "https://",
+  productionHome: "http://",
   devHome: "http://localhost:8000",
 };

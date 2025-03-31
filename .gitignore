@@ -37,4 +37,3 @@ venv
 
 # since we want to show images present in the client folder, we specifically gitignore images in server folder only
 **/server/media
-**/server/static
