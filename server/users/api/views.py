@@ -28,6 +28,8 @@ class UserSignup(APIView):
 
         authenticate(username=request.data["email"], password=request.data["password"])
 
+        login(request, new_user)
+
         user_data = UserViewSerializer(new_user).data
 
         return Response({"message": "Signed up successfully", "user_data": user_data}, status=201)
