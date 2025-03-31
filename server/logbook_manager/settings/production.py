@@ -1,7 +1,7 @@
-DEBUG = False
+DEBUG = True
 
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = [".vercel.app", ".now.sh"]
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".vercel.app", ".now.sh"]
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = [".vercel.app", ".now.sh"]
