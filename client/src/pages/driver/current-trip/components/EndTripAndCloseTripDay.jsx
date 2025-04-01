@@ -31,7 +31,6 @@ const EndTripAndCloseTripDay = (props) => {
       mileage_covered_today: mileageCoveredToday,
       total_miles_driving_today: totalMilesDrivingToday,
       trip_day_id: currentTripDayId,
-      trip_end_date: new Date().toISOString().split("T")[0],
     })
       .then((res) => {
         setCurrentTrip(null);

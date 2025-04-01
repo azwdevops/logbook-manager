@@ -1,5 +1,5 @@
 export default {
-  liveProduction: false,
+  liveProduction: true,
   productionHome: "https://logbookmanager.devzask.com",
   devHome: "http://localhost:8000",
   SYSTEM_ADMIN_GROUP: "System Admin",

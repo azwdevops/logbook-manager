@@ -1,6 +1,6 @@
 from django.contrib.admin import register, ModelAdmin
 
-from logbook.models import TripDetail, TripItem, TripDay, StopRest, Carrier
+from logbook.models import TripDetail, TripItem, TripDay, StopRest, Carrier, Truck
 
 
 @register(TripDetail)
@@ -37,3 +37,8 @@ class StopRestAdmin(ModelAdmin):
 @register(Carrier)
 class CarrierAdmin(ModelAdmin):
     list_display = ("id", "name")
+
+
+@register(Truck)
+class TruckAdmin(ModelAdmin):
+    list_display = ("id", "truck_number", "trailer_number")

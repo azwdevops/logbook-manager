@@ -57,7 +57,6 @@ const CurrentTrip = () => {
         tripId: currentTrip?.id,
         current_trip_item_id: currentTripItem?.id,
         close_trip_day: false,
-        trip_end_date: new Date().toISOString().split("T")[0],
       })
         .then((res) => {
           setCurrentTrip(null);
@@ -112,16 +111,16 @@ const CurrentTrip = () => {
                 <th>End Trip</th>
               </tr>
               <tr>
-                <td>{moment(currentTrip?.trip_start_date).format("LL")}</td>
-                <td>{currentTrip?.pickup_location?.name}</td>
-                <td>{currentTrip?.dropoff_location?.name}</td>
+                <td data-label="Date">{moment(currentTrip?.trip_start_date).format("LL")}</td>
+                <td data-label="Pickup Location">{currentTrip?.pickup_location?.name}</td>
+                <td data-label="Dropoff Location">{currentTrip?.dropoff_location?.name}</td>
                 <td className="button-span" onClick={() => setOpenCurrentTripRouteMap(true)}>
                   View Route Map
                 </td>
-                <td className="button-span">
+                <td className="button-span" data-label="Trip Stop">
                   {currentTripDay ? <span onClick={() => setOpenAddStop(true)}>Add Stop</span> : <span className="red">N/A</span>}
                 </td>
-                <td className="trip-status">
+                <td className="trip-status" data-label="Trip Status">
                   {currentTripItem?.trip_item_name ? (
                     <span className="green bd">{currentTripItem?.trip_item_name}</span>
                   ) : (
@@ -136,7 +135,7 @@ const CurrentTrip = () => {
                     <span className="red bd">N/A</span>
                   )}
                 </td>
-                <td className="button-span" onClick={() => setOpenTripSummary(true)}>
+                <td className="button-span" onClick={() => setOpenTripSummary(true)} data-label="Summary">
                   Trip Summary
                 </td>
                 <td className="button-span" onClick={() => handleEndTrip()}>

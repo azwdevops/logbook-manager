@@ -20,8 +20,6 @@ const StartTripDay = (props) => {
       trip_detail_id: currentTripId,
       item_type: selectedStatus,
       remarks,
-      start_time: new Date().toISOString(),
-      trip_date: new Date().toISOString().split("T")[0],
     })
       .then((res) => {
         setCurrentTripItem(res?.data?.trip_item_data);

@@ -20,7 +20,6 @@ const ChangeStatus = (props) => {
       trip_day: currentTripDay?.id,
       item_type: selectedStatus,
       remarks,
-      start_time: new Date().toISOString(),
       current_trip_item: currentTripItem,
     })
       .then((res) => {

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.db import transaction
-from django.utils.timezone import now
+from django.utils.timezone import now, localtime
 from django.contrib.auth.models import Group
 from django.conf import settings
 
@@ -127,7 +127,7 @@ def get_trips(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_current_trip(request):
-    current_trips = TripDetail.objects.filter(is_current=True).order_by("-trip_start_date")
+    current_trips = TripDetail.objects.filter(is_current=True, driver=request.user).order_by("-trip_start_date")
     if current_trips.exists():
         current_trip_data = SingleTripDetailViewSerializer(current_trips[0]).data
     else:
@@ -141,7 +141,7 @@ def get_current_trip(request):
 def change_trip_status(request):
     if request.data["current_trip_item"]:
         TripItem.objects.filter(id=request.data["current_trip_item"]["id"]).update(end_time=now(), is_current=False)
-    serializer = TripItemSerializer(data=request.data)
+    serializer = TripItemSerializer(data={**request.data, "start_time": localtime(now())})
     serializer.is_valid(raise_exception=True)
     trip_item = serializer.save()
 
@@ -175,7 +175,7 @@ def end_trip(request):
         raise MissingItemError("Error, invalid trip submitted", status_code=400)
     trip.is_current = False
     trip.is_done = True
-    trip.trip_end_date = request.data["trip_end_date"]
+    trip.trip_end_date = localtime(now()).date()
     trip.save()
 
     if request.data["close_trip_day"]:
@@ -206,7 +206,7 @@ def get_logbook_detail(request, tripId, logbookIndex):
     trip_date = trip.trip_start_date + timedelta(days=logbookIndex)
     trip_day = get_object_or_none(TripDay, trip_detail=trip, trip_date=trip_date)
     if not trip_day:
-        raise MissingItemError("Error, invalid logbook selected.")
+        raise MissingItemError("Error, invalid logbook selected.", status_code=400)
     trip_day_data = TripDayLogbookView(trip_day, context={"request_user": request.user}).data
 
     return Response({"message": "success", "trip_day_data": trip_day_data}, status=200)
@@ -238,8 +238,9 @@ def close_trip_day(request):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def start_trip_day(request):
+    local_time = localtime(now())
     trip_day_closed = get_object_or_none(
-        TripDay, trip_date=request.data["trip_date"], trip_detail__id=request.data["trip_detail_id"]
+        TripDay, trip_date=local_time.date(), trip_detail__id=request.data["trip_detail_id"]
     )
     if trip_day_closed:
         raise RequestFailedError(
@@ -250,15 +251,14 @@ def start_trip_day(request):
     trip_day_serializer = TripDaySerializer(
         data={
             "trip_detail": request.data["trip_detail_id"],
-            "trip_date": request.data["trip_date"],
+            "trip_date": local_time.date(),
             "is_current": True,
-            "truck_trailer_number": request.user.truck_trailer_number,
         }
     )
     trip_day_serializer.is_valid(raise_exception=True)
     new_trip_day = trip_day_serializer.save()
 
-    serializer = TripItemSerializer(data={**request.data, "trip_day": new_trip_day.id})
+    serializer = TripItemSerializer(data={**request.data, "trip_day": new_trip_day.id, "start_time": local_time})
     serializer.is_valid(raise_exception=True)
     trip_item = serializer.save()
 
@@ -345,8 +345,15 @@ def assign_trip_driver(request):
         raise MissingItemError("Error, the trip selected is not valid", status_code=400)
     trip_detail.driver = driver
     trip_detail.truck = truck
+    trip_detail.is_current = True
     trip_detail.trip_start_date = request.data["tripStartDate"]
     trip_detail.save()
+
+    driver.driver_assigned = True
+    driver.save()
+
+    truck.truck_assigned = True
+    truck.save()
 
     updated_trip_data = TripDetailViewSerializer(trip_detail).data
 

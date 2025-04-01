@@ -30,7 +30,7 @@ class TripDetailSerializer(ModelSerializer):
 class TripDaySerializer(ModelSerializer):
     class Meta:
         model = TripDay
-        fields = ("trip_detail", "trip_date", "is_current", "truck_trailer_number")
+        fields = ("trip_detail", "trip_date", "is_current")
 
 
 class TripDayViewSerializer(ModelSerializer):
@@ -135,7 +135,7 @@ class StopRestSerializer(ModelSerializer):
 class TripDayLogbookView(ModelSerializer):
     class Meta:
         model = TripDay
-        fields = ("id", "trip_date", "total_miles_driving_today", "mileage_covered_today", "truck_trailer_number")
+        fields = ("id", "trip_date", "total_miles_driving_today", "mileage_covered_today")
 
     def to_representation(self, trip_day):
         data = super().to_representation(trip_day)
@@ -153,6 +153,9 @@ class TripDayLogbookView(ModelSerializer):
         )
         data["on_duty_hours_last_eight_days"] = self.get_on_duty_hours_last_number_of_days(
             self.context.get("request_user"), 8
+        )
+        data["truck_trailer_number"] = (
+            f"{trip_day.trip_detail.truck.truck_number} {trip_day.trip_detail.truck.trailer_number}"
         )
 
         return data

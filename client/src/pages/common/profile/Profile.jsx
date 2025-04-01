@@ -65,10 +65,6 @@ const Profile = () => {
             <label htmlFor="">Email Address</label>
             <input type="text" name="email" value={userData?.email} onChange={handleChange} />
           </span>
-          <span>
-            <label htmlFor="">Truck/Trailer Number</label>
-            <input type="text" name="truck_trailer_number" value={userData?.truck_trailer_number} onChange={handleChange} />
-          </span>
         </div>
         <div className="profile-buttons">
           <button type="button" className="add-button" onClick={() => setOpenChangePassword(true)}>

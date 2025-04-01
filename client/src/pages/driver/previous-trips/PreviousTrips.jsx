@@ -78,10 +78,10 @@ const PreviousTrips = () => {
             <tbody>
               {recentTrips?.map((trip) => (
                 <tr className="table-listing-item" key={trip?.id}>
-                  <td>{moment(trip?.trip_start_date).format("LL")}</td>
-                  <td>{trip?.pickup_location_name}</td>
-                  <td>{trip?.dropoff_location_name}</td>
-                  <td className="button-span">
+                  <td data-label="Start Date">{moment(trip?.trip_start_date).format("LL")}</td>
+                  <td data-label="Pickup Location">{trip?.pickup_location_name}</td>
+                  <td data-label="Dropoff Location">{trip?.dropoff_location_name}</td>
+                  <td className="button-span" data-label="Logbooks">
                     {Array.from({ length: trip?.logbook_count })?.map((_, index) => (
                       <>
                         <span onClick={() => handleOpenELDLog(trip?.id, index)} style={{ margin: "0.5rem 0", display: "block" }}>

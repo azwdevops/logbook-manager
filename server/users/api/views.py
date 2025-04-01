@@ -2,6 +2,7 @@ from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import check_password
+from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -97,6 +98,9 @@ class MaintainDrivers(APIView):
         new_driver.carrier = request.user.carrier
         new_driver.is_driver = True
         new_driver.save()
+
+        driver_group = Group.objects.get(name=settings.DRIVER_GROUP)
+        driver_group.user_set.add(new_driver)
 
         new_driver_data = UserViewSerializer(new_driver).data
 
