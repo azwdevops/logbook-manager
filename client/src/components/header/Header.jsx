@@ -7,9 +7,9 @@ import "./Header.css";
 // import material ui items
 // import shared/global items
 import { showNavbar } from "@/utils";
-import Login from "@/components/auth/Login";
 import { toggleLogin, toggleSignup } from "@/redux/features/authSlice";
-import Signup from "@/components/auth/Signup";
+import Login from "@/components/shared/auth/Login";
+import Signup from "@/components/shared/auth/Signup";
 
 // import redux API
 

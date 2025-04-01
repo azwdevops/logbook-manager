@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import Group
 from django.contrib.auth.hashers import check_password
 
 from rest_framework.views import APIView
@@ -12,27 +13,16 @@ from users.api.serializers import UserSerializer, UserViewSerializer
 from core.exceptions import MissingItemError, RequestFailedError
 from core.utils import get_object_or_none
 from users.models import User
+from logbook.models import Truck
 
 
-class UserSignup(APIView):
-    permission_classes = (AllowAny,)
-
-    @transaction.atomic
-    def post(self, request):
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        new_user = serializer.save()
-
-        new_user.set_password(request.data["password"])
-        new_user.save()
-
-        authenticate(username=request.data["email"], password=request.data["password"])
-
-        login(request, new_user)
-
-        user_data = UserViewSerializer(new_user).data
-
-        return Response({"message": "Signed up successfully", "user_data": user_data}, status=201)
+def user_member_groups(user):
+    current_users_groups = []
+    user_groups = Group.objects.prefetch_related("user_set").filter(is_active=True)
+    for group in user_groups:
+        if user in group.user_set.all():
+            current_users_groups.append(group.name)
+    return current_users_groups
 
 
 class UserLogin(APIView):
@@ -48,6 +38,7 @@ class UserLogin(APIView):
 
         login(request, user)
         user_data = UserViewSerializer(user).data
+        user_data = {**user_data, "user_groups": user_member_groups(request.user)}
 
         return Response({"message": "Login successful", "user_data": user_data}, status=200)
 
@@ -77,8 +68,9 @@ class MaintainUser(APIView):
         return Response({"message": "User updated successfully"}, status=200)
 
     def get(self, request):
-        serializer = UserViewSerializer(request.user)
-        return Response({"user_data": serializer.data}, status=200)
+        user_data = UserViewSerializer(request.user).data
+        user_data = {**user_data, "user_groups": user_member_groups(request.user)}
+        return Response({"user_data": user_data}, status=200)
 
 
 @api_view(["POST"])
@@ -91,3 +83,62 @@ def change_password(request):
     request.user.save()
 
     return Response({"message": "Password changed successfully"}, status=200)
+
+
+class MaintainDrivers(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        new_driver = serializer.save()
+        new_driver.set_password(request.data["password"])
+        new_driver.carrier = request.user.carrier
+        new_driver.is_driver = True
+        new_driver.save()
+
+        new_driver_data = UserViewSerializer(new_driver).data
+
+        return Response({"message": "Driver added successfully", "new_driver_data": new_driver_data}, status=201)
+
+    @transaction.atomic
+    def patch(self, request):
+        driver = get_object_or_none(User, id=request.data["id"])
+        if not driver:
+            raise MissingItemError("Error, invalid driver selected", status_code=400)
+        serializer = UserSerializer(driver, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_driver = serializer.save()
+
+        updated_driver_data = UserViewSerializer(updated_driver).data
+
+        return Response(
+            {"message": "Driver updated successfully", "updated_driver_data": updated_driver_data}, status=200
+        )
+
+    def get(self, request):
+        drivers = User.objects.filter(carrier=request.user.carrier, carrier__isnull=False, is_driver=True)
+
+        drivers_data = UserViewSerializer(drivers, many=True).data
+
+        return Response({"message": "success", "drivers_data": drivers_data}, status=200)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_available_carrier_drivers(request):
+    available_drivers = User.objects.filter(carrier=request.user.carrier, is_driver=True, driver_assigned=False)
+    available_drivers_data = UserViewSerializer(available_drivers, many=True).data
+    available_trucks_data = Truck.objects.filter(carrier=request.user.carrier, truck_assigned=False).values(
+        "id", "truck_number", "trailer_number"
+    )
+
+    return Response(
+        {
+            "message": "success",
+            "available_drivers_data": available_drivers_data,
+            "available_trucks_data": available_trucks_data,
+        },
+        status=200,
+    )

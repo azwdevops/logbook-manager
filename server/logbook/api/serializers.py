@@ -6,21 +6,25 @@ from django.db.models import Sum, F, ExpressionWrapper, DurationField
 
 from rest_framework.serializers import ModelSerializer
 
-from logbook.models import TripDetail, TripItem, StopRest, TripDay
+from logbook.models import Carrier, TripDetail, TripItem, StopRest, TripDay, Truck
+
+
+class CarrierViewSerializer(ModelSerializer):
+    class Meta:
+        model = Carrier
+        fields = ("id", "name")
+
+    def to_representation(self, carrier):
+        data = super().to_representation(carrier)
+        data["email"] = carrier.admin.email
+
+        return data
 
 
 class TripDetailSerializer(ModelSerializer):
     class Meta:
         model = TripDetail
-        fields = (
-            "current_location",
-            "pickup_location",
-            "dropoff_location",
-            "cycle_used",
-            "trip_start_date",
-            "driver",
-            "is_current",
-        )
+        fields = ("current_location", "pickup_location", "dropoff_location", "cycle_used", "carrier")
 
 
 class TripDaySerializer(ModelSerializer):
@@ -33,6 +37,29 @@ class TripDayViewSerializer(ModelSerializer):
     class Meta:
         model = TripDay
         fields = ("id", "trip_date")
+
+
+class TripDetailViewSerializer(ModelSerializer):
+    class Meta:
+        model = TripDetail
+        fields = ("id", "trip_start_date")
+
+    def to_representation(self, trip_detail):
+        data = super().to_representation(trip_detail)
+        data["pickup_location_name"] = trip_detail.pickup_location["name"]
+        data["dropoff_location_name"] = trip_detail.dropoff_location["name"]
+        # we add 1 since the days should be inclusive of both start and end
+        data["logbook_count"] = (
+            (trip_detail.trip_end_date - trip_detail.trip_start_date).days + 1 if trip_detail.trip_end_date else 1
+        )
+        data["driver_name"] = (
+            f"{trip_detail.driver.first_name} {trip_detail.driver.last_name}" if trip_detail.driver else ""
+        )
+        data["truck_number"] = (
+            f"{trip_detail.truck.truck_number} {trip_detail.truck.trailer_number}" if trip_detail.truck else ""
+        )
+
+        return data
 
 
 class MultipleTripDetailViewSerializer(ModelSerializer):
@@ -239,3 +266,15 @@ class TripSummaryViewSerializer(ModelSerializer):
         )
 
         return data
+
+
+class TruckSerializer(ModelSerializer):
+    class Meta:
+        model = Truck
+        fields = ("truck_number", "trailer_number", "carrier")
+
+
+class TruckViewSerializer(ModelSerializer):
+    class Meta:
+        model = Truck
+        fields = ("id", "truck_number", "trailer_number")

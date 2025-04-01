@@ -4,7 +4,6 @@ import { useDispatch } from "react-redux";
 import CloseTripDay from "./components/CloseTripDay";
 import StartTripDay from "./components/StartTripDay";
 import EndTripAndCloseTripDay from "./components/EndTripAndCloseTripDay";
-import TripInputForm from "./components/TripInputForm";
 import AddStop from "./components/AddStop";
 import ChangeStatus from "./components/ChangeStatus";
 import Timer from "./components/Timer";
@@ -12,8 +11,8 @@ import { showError } from "@/utils";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
 import moment from "moment";
-import TripSummary from "../previous-trips/components/TripSummary";
 import CurrentTripRouteMap from "./components/CurrentTripRouteMap";
+import TripSummary from "@/components/shared/trips/TripSummary";
 
 const CurrentTrip = () => {
   const dispatch = useDispatch();
@@ -21,7 +20,6 @@ const CurrentTrip = () => {
   const [openCloseTripDay, setOpenCloseTripDay] = useState(false);
   const [openStartTripDay, setOpenStartTripDay] = useState(false);
   const [openEndTripAndCloseTripDay, setOpenEndTripAndCloseTripDay] = useState(false);
-  const [openTripInputForm, setOpenTripInputForm] = useState(false);
   const [currentTrip, setCurrentTrip] = useState(null);
   const [currentTripDay, setCurrentTripDay] = useState(null);
   const [currentTripItem, setCurrentTripItem] = useState(null);
@@ -150,13 +148,6 @@ const CurrentTrip = () => {
         ) : (
           <h4 className="not-available">You do not have an active current trip</h4>
         )}
-        {!currentTrip && (
-          <div style={{ textAlign: "center" }}>
-            <button type="button" className="add-button" onClick={() => setOpenTripInputForm(true)}>
-              New Trip
-            </button>
-          </div>
-        )}
       </div>
       {openStartTripDay && (
         <StartTripDay
@@ -200,14 +191,7 @@ const CurrentTrip = () => {
           setCurrentTripItem={setCurrentTripItem}
         />
       )}
-      {openTripInputForm && (
-        <TripInputForm
-          openTripInputForm={openTripInputForm}
-          setOpenTripInputForm={setOpenTripInputForm}
-          setCurrentTrip={setCurrentTrip}
-          setCurrentTripDay={setCurrentTripDay}
-        />
-      )}
+
       {openTripSummary && (
         <TripSummary openTripSummary={openTripSummary} setOpenTripSummary={setOpenTripSummary} selectedTripId={currentTrip?.id} />
       )}

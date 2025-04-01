@@ -1,4 +1,4 @@
-from django.db.models import AutoField, EmailField, CharField, BooleanField, DateTimeField
+from django.db.models import Model, AutoField, EmailField, CharField, BooleanField, DateTimeField, ForeignKey, CASCADE
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 
@@ -36,12 +36,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = CharField(max_length=50, null=True)
     driver_number = CharField(max_length=100, unique=True, db_collation="case_insensitive")
     driver_initials = CharField(max_length=100)
+    is_driver = BooleanField(default=False)
+    is_carrier_admin = BooleanField(default=False)
+    driver_assigned = BooleanField(default=False)
     is_admin = BooleanField(default=False)
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
     created_at = DateTimeField(auto_now_add=True)
     last_login = DateTimeField(verbose_name="last login", auto_now=True)
-    truck_trailer_number = CharField(max_length=255, null=True)
+    carrier = ForeignKey("logbook.Carrier", on_delete=CASCADE, null=True, blank=True)
 
     USERNAME_FIELD = "email"
 
@@ -57,3 +60,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     # does this user has permission to view app, always yes for simplicity
     def has_module_perms(self, app_label):
         return True
+
+
+# we add extra fields to the django group model
+Group.add_to_class("is_active", BooleanField(default=True))
+Group.add_to_class("unique_name", CharField(max_length=100, null=True, unique=True, db_collation="case_insensitive"))

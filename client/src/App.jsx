@@ -3,20 +3,27 @@ import { hideNavBar } from "@/utils";
 import Header from "@/components/header/Header";
 import Sidebar from "@/components/sidebar/Sidebar";
 import { Route, Routes } from "react-router-dom";
-import Home from "@/pages/home/Home";
 import PrivateRoute from "@/utils/PrivateRoute";
-import NotFound from "@/pages/not-found/NotFound";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import API from "@/utils/API";
 import { authSuccess } from "@/redux/features/authSlice";
 import { toggleLoading } from "@/redux/features/sharedSlice";
-import PreviousTrips from "@/pages/previous-trips/PreviousTrips";
-import Profile from "@/pages/profile/Profile";
-import CurrentTrip from "./pages/current-trip/CurrentTrip";
+import NotFound from "@/pages/common/not-found/NotFound";
+import Home from "@/pages/common/home/Home";
+import CurrentTrip from "@/pages/driver/current-trip/CurrentTrip";
+import PreviousTrips from "@/pages/driver/previous-trips/PreviousTrips";
+import Profile from "@/pages/common/profile/Profile";
+import globals from "@/utils/globals";
+import Carriers from "@/pages/system-admin/carriers/Carriers";
+import Drivers from "@/pages/carrier-admin/drivers/Drivers";
+import Trips from "@/pages/carrier-admin/trips/Trips";
+import Trucks from "@/pages/carrier-admin/trucks/Trucks";
 
 function App() {
   const dispatch = useDispatch();
+
+  const user_groups = useSelector((state) => state?.auth?.user?.user_groups);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,8 +43,22 @@ function App() {
       {/* PRIVATE ROUTES */}
 
       <Route element={<PrivateRoute />}>
-        <Route exact path="/current-trip/" element={<CurrentTrip />} />
-        <Route exact path="/previous-trips/" element={<PreviousTrips />} />
+        {[globals?.SYSTEM_ADMIN_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <Route exact path="/carriers/" element={<Carriers />} />
+        )}
+        {[globals?.DRIVER_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <>
+            <Route exact path="/current-trip/" element={<CurrentTrip />} />
+            <Route exact path="/previous-trips/" element={<PreviousTrips />} />
+          </>
+        )}
+        {[globals?.CARRIER_ADMIN_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <>
+            <Route exact path="/drivers/" element={<Drivers />} />
+            <Route exact path="/trucks/" element={<Trucks />} />
+            <Route exact path="/trips/" element={<Trips />} />
+          </>
+        )}
         <Route exact path="/profile/" element={<Profile />} />
       </Route>
       {/* PUBLIC ROUTES */}

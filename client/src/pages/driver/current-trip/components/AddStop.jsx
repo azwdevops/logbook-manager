@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import CustomModal from "@/components/shared/CustomModal";
-import LocationSearch from "./LocationSearch";
-import LocationMap from "./LocationMap";
 import { useDispatch } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
 import { fetchLocationName, showError } from "@/utils";
+import LocationMap from "@/components/shared/trips/LocationMap";
+import LocationSearch from "@/components/shared/trips/LocationSearch";
 
 const stopTypes = ["Pickup", "Dropoff", "Fueling", "Rest"];
 

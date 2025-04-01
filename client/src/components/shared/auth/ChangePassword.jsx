@@ -1,9 +1,9 @@
 import API from "@/utils/API";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomModal from "../shared/CustomModal";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import { showError } from "@/utils";
+import CustomModal from "@/components/shared/CustomModal";
 
 const ChangePassword = (props) => {
   const { openChangePassword, setOpenChangePassword } = props;

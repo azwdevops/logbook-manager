@@ -13,3 +13,9 @@ class RequestFailedError(APIException):
     def __init__(self, detail, status_code):
         self.status_code = status_code
         self.detail = {"message": force_str(detail)}
+
+
+class ItemExistsError(APIException):
+    def __init__(self, detail, status_code):
+        self.status_code = status_code
+        self.detail = {"message": force_str(detail)}

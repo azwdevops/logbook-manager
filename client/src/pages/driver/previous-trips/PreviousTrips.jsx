@@ -7,11 +7,11 @@ import { showError } from "@/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 
-import "./PreviousTrips.css";
-import ELDLogUI from "./ELDLog/ELDLogUI";
+import ELDLogUI from "@/components/shared/ELDLog/ELDLogUI";
 
-import RouteMap from "./components/RouteMap";
-import TripSummary from "./components/TripSummary";
+import "./PreviousTrips.css";
+import RouteMap from "@/components/shared/trips/RouteMap";
+import TripSummary from "@/components/shared/trips/TripSummary";
 
 const PreviousTrips = () => {
   const loading = useSelector((state) => state?.shared?.loading);

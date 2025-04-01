@@ -5,11 +5,16 @@ import "./Sidebar.css";
 import API from "@/utils/API";
 import { logoutUser, toggleLogin, toggleSignup } from "@/redux/features/authSlice";
 import { showError } from "@/utils";
+import globals from "@/utils/globals";
+import SystemAdminLinks from "./links/SystemAdminLinks";
+import DriverLinks from "./links/DriverLinks";
+import CarrierAdminLinks from "./links/CarrierAdminLinks";
 
 const Sidebar = () => {
   const { pathname } = useLocation();
 
   const userId = useSelector((state) => state?.auth?.user?.id);
+  const user_groups = useSelector((state) => state?.auth?.user?.user_groups);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,14 +51,17 @@ const Sidebar = () => {
             </Link>
           </>
         )}
+        {[globals?.SYSTEM_ADMIN_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <SystemAdminLinks Link={Link} pathname={pathname} />
+        )}
+        {[globals?.DRIVER_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <DriverLinks Link={Link} pathname={pathname} />
+        )}
+        {[globals?.CARRIER_ADMIN_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (
+          <CarrierAdminLinks Link={Link} pathname={pathname} />
+        )}
         {userId && (
           <>
-            <Link to="/current-trip/" className={`${pathname}` === "/current-trip/" ? "sidebar-link active" : "sidebar-link"}>
-              <i className="bx bx-trip"></i> <span className="nav-name">Current Trip</span>
-            </Link>
-            <Link to="/previous-trips/" className={`${pathname}` === "/previous-trips/" ? "sidebar-link active" : "sidebar-link"}>
-              <i className="bx bxs-dashboard"></i> <span className="nav-name">Previous Trips</span>
-            </Link>
             <Link to="/profile/" className={`${pathname}` === "/profile/" ? "sidebar-link active" : "sidebar-link"}>
               <i className="bx bxs-user"></i> <span className="nav-name">Profile</span>
             </Link>

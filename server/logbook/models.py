@@ -4,6 +4,7 @@ from django.db.models import (
     CharField,
     ForeignKey,
     PROTECT,
+    CASCADE,
     DateTimeField,
     DateField,
     BooleanField,
@@ -14,16 +15,31 @@ from logbook.choices import trip_item_types
 from users.models import User
 
 
+# carrier model
+class Carrier(Model):
+    name = CharField(max_length=100, unique=True, db_collation="case_insensitive")
+    admin = ForeignKey(User, on_delete=CASCADE, null=True, blank=True, related_name="carrier_admin")
+
+
+class Truck(Model):
+    truck_number = CharField(max_length=100, unique=True, db_collation="case_insensitive")
+    trailer_number = CharField(max_length=100, unique=True, db_collation="case_insensitive")
+    carrier = ForeignKey(Carrier, on_delete=PROTECT, null=True, blank=True)
+    truck_assigned = BooleanField(default=False)
+
+
 class TripDetail(Model):
+    carrier = ForeignKey(Carrier, on_delete=PROTECT, null=True, blank=True)
     current_location = JSONField()
     pickup_location = JSONField()
     dropoff_location = JSONField()
     cycle_used = CharField(max_length=100)
-    trip_start_date = DateField()
+    trip_start_date = DateField(null=True)
     trip_end_date = DateField(null=True)
     is_current = BooleanField(default=False)
     is_done = BooleanField(default=False)
     driver = ForeignKey(User, on_delete=PROTECT, null=True, blank=True)
+    truck = ForeignKey(Truck, on_delete=PROTECT, null=True, blank=True)
 
 
 class TripDay(Model):
@@ -35,7 +51,6 @@ class TripDay(Model):
     mileage_covered_today = FloatField(default=0)
     is_current = BooleanField(default=False)
     is_done = BooleanField(default=False)
-    truck_trailer_number = CharField(max_length=255, null=True)
 
     class Meta:
         unique_together = ("trip_detail", "trip_date")

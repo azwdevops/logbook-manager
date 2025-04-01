@@ -6,7 +6,7 @@ import API from "@/utils/API";
 import { showError } from "@/utils";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import { CircularProgress } from "@mui/material";
-import ChangePassword from "@/components/auth/ChangePassword";
+import ChangePassword from "@/components/shared/auth/ChangePassword";
 
 const Profile = () => {
   const [openChangePassword, setOpenChangePassword] = useState(false);

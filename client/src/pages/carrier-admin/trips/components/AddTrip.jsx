@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import LocationMap from "./LocationMap";
 import CustomModal from "@/components/shared/CustomModal";
-import LocationSearch from "./LocationSearch"; // New component
 import { useDispatch, useSelector } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import API from "@/utils/API";
 import { fetchLocationName, showError } from "@/utils";
+import LocationMap from "@/components/shared/trips/LocationMap";
+import LocationSearch from "@/components/shared/trips/LocationSearch";
 
-const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip, setCurrentTripDay }) => {
+const AddTrip = ({ openAddTrip, setOpenAddTrip, tripsList, setTripsList }) => {
   const dispatch = useDispatch();
-
-  const userId = useSelector((state) => state?.auth?.user?.id);
 
   const [tripDetails, setTripDetails] = useState({
     pickupLocation: { name: "", coords: null },
@@ -49,31 +47,25 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
       dropoff_location: tripDetails.dropoffLocation,
       current_location: tripDetails.currentLocation,
       cycle_used: tripDetails.currentCycle,
-      trip_start_date: new Date().toISOString().split("T")[0],
-      driver: userId,
-      is_current: true,
-      start_time: new Date().toISOString(),
-      end_time: new Date().toISOString(),
     };
     await API.post(`/logbook/add-trip/`, body)
       .then((res) => {
+        setTripsList([...tripsList, res.data.new_trip_data]);
         setTripDetails({
           pickupLocation: { name: "", coords: null },
           dropoffLocation: { name: "", coords: null },
           currentLocation: { name: "", coords: null },
           currentCycle: "",
         });
-        setCurrentTrip(res?.data?.current_trip_data);
-        setCurrentTripDay(res?.data?.trip_day_data);
         window.alert(res?.data?.message);
-        setOpenTripInputForm(false);
+        setOpenAddTrip(false);
       })
       .catch((err) => showError(err))
       .finally(() => dispatch(toggleLoading(false)));
   };
 
   return (
-    <CustomModal isOpen={openTripInputForm} maxWidth="1200px" maxHeight="900px">
+    <CustomModal isOpen={openAddTrip} maxWidth="1200px" maxHeight="900px">
       <form className="dialog" onSubmit={handleSubmit}>
         <h3>Enter Trip Details</h3>
         <p className="bd">
@@ -128,7 +120,7 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
         </div>
 
         <div className="form-buttons">
-          <button type="button" onClick={() => setOpenTripInputForm(false)}>
+          <button type="button" onClick={() => setOpenAddTrip(false)}>
             Close
           </button>
           <button type="submit">Add Trip</button>
@@ -138,4 +130,4 @@ const TripInputForm = ({ openTripInputForm, setOpenTripInputForm, setCurrentTrip
   );
 };
 
-export default TripInputForm;
+export default AddTrip;
