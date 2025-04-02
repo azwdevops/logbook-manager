@@ -1,39 +1,48 @@
-import CustomModal from "@/components/shared/CustomModal";
-import { toggleLoading } from "@/redux/features/sharedSlice";
-import { showError } from "@/utils";
-import API from "@/utils/API";
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import CustomModal from "@/components/shared/CustomModal"; // Importing the CustomModal component for displaying modal
+import { toggleLoading } from "@/redux/features/sharedSlice"; // Importing Redux action to toggle loading state
+import { showError } from "@/utils"; // Importing utility function to display errors
+import API from "@/utils/API"; // Importing custom API utility for making requests
+import React, { useEffect, useState } from "react"; // Importing React and hooks (useEffect, useState)
+import { useDispatch } from "react-redux"; // Importing useDispatch hook to dispatch actions
 
 const EditCarrier = (props) => {
+  // Destructuring props passed into the component
   const { openEditCarrier, setOpenEditCarrier, setCarriersList, currentCarrier } = props;
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Dispatch function to dispatch actions
 
+  // State for managing carrier data form inputs
   const [carrierData, setCarrierData] = useState({});
 
+  // useEffect hook to update the carrier data when currentCarrier changes
   useEffect(() => {
     setCarrierData({ ...currentCarrier });
   }, [currentCarrier]);
 
+  // Handle input field changes and update carrierData state
   const handleChange = (e) => {
     setCarrierData({ ...carrierData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
 
+    // Start loading
     dispatch(toggleLoading(true));
+
+    // Make API request to update carrier data
     await API.patch(`/logbook/maintain-carriers/`, carrierData)
       .then((res) => {
+        // Update the carrier in the carriers list with the updated data
         setCarriersList((prev) =>
           prev?.map((item) => (item?.id === res?.data?.updated_carrier_data?.id ? res?.data?.updated_carrier_data : item))
         );
-
+        // Show success message
         window.alert(res?.data?.message);
       })
-      .catch((err) => showError(err))
-      .finally(() => dispatch(toggleLoading(false)));
+      .catch((err) => showError(err)) // Handle errors
+      .finally(() => dispatch(toggleLoading(false))); // Stop loading
   };
 
   return (
@@ -60,4 +69,4 @@ const EditCarrier = (props) => {
   );
 };
 
-export default EditCarrier;
+export default EditCarrier; // Export the EditCarrier component as default

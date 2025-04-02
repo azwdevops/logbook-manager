@@ -1,15 +1,17 @@
-import CustomModal from "@/components/shared/CustomModal";
-import { toggleLoading } from "@/redux/features/sharedSlice";
-import { showError } from "@/utils";
-import API from "@/utils/API";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import CustomModal from "@/components/shared/CustomModal"; // Importing the CustomModal component for displaying modal
+import { toggleLoading } from "@/redux/features/sharedSlice"; // Importing Redux action to toggle loading state
+import { showError } from "@/utils"; // Importing utility function to display errors
+import API from "@/utils/API"; // Importing custom API utility for making requests
+import React, { useState } from "react"; // Importing React and useState hook for managing component state
+import { useDispatch } from "react-redux"; // Importing useDispatch hook to dispatch actions
 
 const AddCarrier = (props) => {
+  // Destructuring props passed into the component
   const { openAddCarrier, setOpenAddCarrier, setCarriersList, carriersList } = props;
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Dispatch function to dispatch actions
 
+  // State for managing carrier data inputs
   const [carrierData, setCarrierData] = useState({
     name: "",
     email: "",
@@ -19,19 +21,29 @@ const AddCarrier = (props) => {
     confirm_password: "",
   });
 
+  // Handle input field changes and update carrierData state
   const handleChange = (e) => {
     setCarrierData({ ...carrierData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
+
+    // Check if password and confirm password match
     if (carrierData?.password?.trim() !== carrierData?.confirm_password?.trim()) {
       return alert("Password and confirm password should be the same");
     }
+
+    // Start loading
     dispatch(toggleLoading(true));
+
+    // Make API request to add a new carrier
     await API.post(`/logbook/maintain-carriers/`, carrierData)
       .then((res) => {
+        // On success, add the new carrier to the list
         setCarriersList([...carriersList, res.data.new_carrier_data]);
+        // Reset the carrierData state
         setCarrierData({
           name: "",
           email: "",
@@ -40,10 +52,11 @@ const AddCarrier = (props) => {
           password: "",
           confirm_password: "",
         });
+        // Show success message
         window.alert(res?.data?.message);
       })
-      .catch((err) => showError(err))
-      .finally(() => dispatch(toggleLoading(false)));
+      .catch((err) => showError(err)) // Handle errors
+      .finally(() => dispatch(toggleLoading(false))); // Stop loading
   };
 
   return (
@@ -91,4 +104,4 @@ const AddCarrier = (props) => {
   );
 };
 
-export default AddCarrier;
+export default AddCarrier; // Export the AddCarrier component as default

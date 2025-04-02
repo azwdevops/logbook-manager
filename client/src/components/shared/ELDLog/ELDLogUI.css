@@ -1,6 +1,7 @@
 .daily-log {
     margin: auto;
     font-size: 0.9rem;
+    padding: 10px;
     padding-bottom: 6rem !important;
     margin-bottom: 6rem !important;
 }
@@ -164,16 +165,19 @@
     justify-content: space-between;
 }
 
-.daily-log-buttons {
-    button:nth-child(1) {
-        background: linear-gradient(to right, rgb(243, 2, 2), rgb(223, 39, 161));
-        justify-self: start;
-    }
+.daily-log-buttons button {
+    color: white;
+    font-weight: bold;
 }
 
-.daily-log-buttons {
-    button:nth-child(2) {
-        background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
-        justify-self: end;
-    }
+.daily-log-buttons button:nth-child(1) {
+    background: linear-gradient(to right, rgb(243, 2, 2), rgb(223, 39, 161));
+    justify-self: start;
+
+}
+
+.daily-log-buttons button:nth-child(2) {
+    background: linear-gradient(to right, var(--theme-color-1), var(--theme-color-2));
+    justify-self: end;
+
 }
