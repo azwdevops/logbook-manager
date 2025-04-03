@@ -12,6 +12,7 @@ import TripSummary from "@/components/shared/trips/TripSummary"; // Component to
 import ActualRouteMap from "@/components/shared/trips/ActualRouteMap";
 import PlannedRouteMap from "@/components/shared/trips/PlannedRouteMap";
 import RecordMileageToday from "./components/RecordMileageToday";
+import Directions from "./components/Directions";
 
 const CurrentTrip = () => {
   const dispatch = useDispatch(); // Initialize dispatch to interact with Redux store
@@ -28,6 +29,7 @@ const CurrentTrip = () => {
   const [openActualRouteMap, setOpenActualRouteMap] = useState(false);
 
   const [openRecordMileageToday, setOpenRecordMileageToday] = useState(false);
+  const [openDirections, setOpenDirections] = useState(false);
 
   // useEffect hook to fetch current trip data on component mount
   useEffect(() => {
@@ -91,6 +93,7 @@ const CurrentTrip = () => {
                 <th>Date</th>
                 <th>Pickup Location</th>
                 <th>Dropoff Location</th>
+                <th>Directions</th>
                 <th>Planned Route Map</th>
                 <th>Route Map So Far</th>
                 <th>Add Stop</th>
@@ -101,6 +104,9 @@ const CurrentTrip = () => {
                 <td data-label="Date">{moment(currentTrip?.trip_start_date).format("LL")}</td> {/* Format trip start date */}
                 <td data-label="Pickup Location">{currentTrip?.pickup_location?.name}</td> {/* Display pickup location */}
                 <td data-label="Dropoff Location">{currentTrip?.dropoff_location?.name}</td> {/* Display dropoff location */}
+                <td data-label="View Directions" className="button-span" onClick={() => setOpenDirections(true)}>
+                  View Directions
+                </td>
                 <td className="button-span" onClick={() => setOpenPlannedRouteMap(true)}>
                   Planned Route Map
                 </td>
@@ -162,6 +168,8 @@ const CurrentTrip = () => {
           currentDriverLogbookId={currentDriverLogbook?.id}
         />
       )}
+
+      {openDirections && <Directions openDirections={openDirections} setOpenDirections={setOpenDirections} currentTrip={currentTrip} />}
     </>
   );
 };
