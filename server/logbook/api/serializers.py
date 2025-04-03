@@ -13,66 +13,70 @@ class CarrierViewSerializer(ModelSerializer):
     Serializer for the Carrier model.
 
     This serializer includes the 'id' and 'name' fields from the Carrier model
-    and adds the admin's email in the representation.
+    and adds the admin's email to the response.
     """
 
     class Meta:
-        model = Carrier  # Specifies the model to be serialized
-        fields = ("id", "name")  # Defines the fields to be included in the serialization
+        model = Carrier  # This specifies the model, which is Carrier.
+        fields = ("id", "name")  # These are the fields that will be included in the serialized output.
 
     def to_representation(self, carrier):
         """
-        Customizes the serialized representation of the Carrier instance.
+        Customizes how the Carrier instance is represented when serialized.
 
         Args:
-            carrier: The Carrier instance being serialized.
+            carrier: The Carrier instance we are serializing.
 
         Returns:
-            dict: The serialized data with an additional 'email' field.
+            dict: The serialized data, including an extra 'email' field for the admin's email.
         """
-        data = super().to_representation(carrier)  # Get the default serialized data
-        data["email"] = carrier.admin.email  # Add the admin's email to the serialized output
+        data = super().to_representation(carrier)  # Get the default serialized data first
+        data["email"] = carrier.admin.email  # Add the admin's email to the data
 
-        return data  # Return the modified data dictionary
+        return data  # Return the updated data with the added 'email'
 
 
 class TruckSerializer(ModelSerializer):
     """
     Serializer for the Truck model.
 
-    This serializer handles the representation of truck-related details,
-    including the truck number, trailer number, and carrier information.
+    This serializer manages how truck details are represented,
+    including the truck number, trailer number, and carrier info.
     """
 
     class Meta:
-        model = Truck  # Specifies the model being serialized
-        fields = ("truck_number", "trailer_number", "carrier")  # Defines the fields to include in the output
+        model = Truck  # This specifies the model being serialized, which is Truck.
+        fields = (
+            "truck_number",
+            "trailer_number",
+            "carrier",
+        )  # These are the fields to be included in the serialized data.
 
 
 class TruckViewSerializer(ModelSerializer):
     """
     Serializer for viewing Truck model details.
 
-    This serializer provides a read-only representation of a truck,
+    This serializer provides a read-only view of a truck's details,
     including its ID, truck number, and trailer number.
     """
 
     class Meta:
-        model = Truck  # Specifies the model being serialized
-        fields = ("id", "truck_number", "trailer_number")  # Defines the fields to include in the output
+        model = Truck  # This specifies the model we're serializing, which is Truck.
+        fields = ("id", "truck_number", "trailer_number")  # These are the fields to include in the serialized data.
 
 
 class TripDetailSerializer(ModelSerializer):
     """
     Serializer for the TripDetail model.
 
-    This serializer includes fields related to trip details such as locations,
+    This serializer includes fields related to the trip, such as locations,
     cycle usage, and the associated carrier.
     """
 
     class Meta:
-        model = TripDetail  # Specifies the model to be serialized
-        # Define the fields to be included in the serialization
+        model = TripDetail  # Specifies the model being serialized, which is TripDetail.
+        # These are the fields to be included in the serialized output.
         fields = ("current_location", "pickup_location", "dropoff_location", "cycle_used", "carrier")
 
 
@@ -85,7 +89,7 @@ class TripDetailViewSerializer(ModelSerializer):
     """
 
     class Meta:
-        model = TripDetail  # Specifies the model to be serialized
+        model = TripDetail  # Specifies the model being serialized, which is TripDetail.
         fields = (
             "id",
             "trip_start_date",
@@ -93,37 +97,32 @@ class TripDetailViewSerializer(ModelSerializer):
             "current_location",
             "pickup_location",
             "dropoff_location",
-        )  # Defines the basic fields to be included in the serialization
+        )  # These are the basic fields that will be included in the serialized output.
 
     def to_representation(self, trip_detail):
         """
         Customizes the serialized representation of the TripDetail instance.
 
         Args:
-            trip_detail: The TripDetail instance being serialized.
+            trip_detail: The TripDetail instance that is being serialized.
 
         Returns:
             dict: The serialized data with additional fields such as location names,
                   logbook count, driver name, and truck details.
         """
-        data = super().to_representation(trip_detail)  # Get the default serialized data
+        data = super().to_representation(trip_detail)  # Get the default serialized data from the parent class
 
-        # Calculate the logbook count (days inclusive of both start and end dates)
-        data["logbook_count"] = (
-            (trip_detail.trip_end_date - trip_detail.trip_start_date).days + 1 if trip_detail.trip_end_date else 1
-        )
-
-        # Add the driver's full name, or an empty string if no driver exists
+        # Add the driver's full name, or an empty string if no driver is assigned
         data["driver_name"] = (
             f"{trip_detail.driver.first_name} {trip_detail.driver.last_name}" if trip_detail.driver else ""
         )
 
-        # Add truck details, combining truck number and trailer number, or an empty string if no truck exists
+        # Add truck details, combining the truck number and trailer number, or an empty string if no truck is assigned
         data["truck_number"] = (
             f"{trip_detail.truck.truck_number} {trip_detail.truck.trailer_number}" if trip_detail.truck else ""
         )
 
-        return data  # Return the modified data dictionary
+        return data  # Return the updated data with the additional calculated fields
 
 
 class TripSummaryViewSerializer(ModelSerializer):
@@ -135,8 +134,8 @@ class TripSummaryViewSerializer(ModelSerializer):
     """
 
     class Meta:
-        model = TripDetail  # Specifies the model being serialized
-        fields = ("id", "cycle_used")  # Only includes the trip ID and cycle used in the serialized output
+        model = TripDetail  # Specifies the model being serialized, which is TripDetail.
+        fields = ("id", "cycle_used")  # Only includes the trip ID and cycle used in the serialized data.
 
     def to_representation(self, trip_detail):
         """
@@ -146,31 +145,24 @@ class TripSummaryViewSerializer(ModelSerializer):
             trip_detail (TripDetail): The TripDetail instance being serialized.
 
         Returns:
-            dict: Serialized data including location names, trip mileage, trip duration, and stops.
+            dict: The serialized data including location names, trip mileage, trip duration, and stops.
         """
-        # Call the parent serializer method
+        # Call the parent class method to get the default serialized data
         data = super().to_representation(trip_detail)
 
-        # Add location details (assuming stored as dictionaries with a "name" field)
+        # Add location details (these are assumed to be dictionaries with a "name" field)
         data["starting_location_name"] = trip_detail.current_location["name"]
         data["pickup_location_name"] = trip_detail.pickup_location["name"]
         data["dropoff_location_name"] = trip_detail.dropoff_location["name"]
 
-        # Count the number of days the trip has spanned
-        data["trip_days_count"] = (
-            (trip_detail.trip_end_date - trip_detail.trip_start_date).days + 1
-            if trip_detail.trip_end_date
-            else "Trip Ongoing"
-        )
-
-        # Fetch and order trip stop details
+        # Fetch and order the trip stop details, such as location, start time, end time, and stop type
         data["stops"] = (
             StopRest.objects.filter(trip_detail=trip_detail)
-            .order_by("start_time")
-            .values("id", "stop_location", "start_time", "end_time", "stop_type")
+            .order_by("start_time")  # Sort by start time of the stop
+            .values("id", "stop_location", "start_time", "end_time", "stop_type")  # Select relevant fields
         )
 
-        return data
+        return data  # Return the modified data with additional stop and location details
 
 
 class SingleTripDetailViewSerializer(ModelSerializer):
@@ -178,25 +170,26 @@ class SingleTripDetailViewSerializer(ModelSerializer):
     Serializer for the TripDetail model, customized for handling a single trip detail view.
 
     This serializer includes basic fields for trip details along with dynamic information
-    about the current trip day and trip item.
+    about the current trip.
     """
 
     class Meta:
-        model = TripDetail  # Specifies the model to be serialized
+        model = TripDetail  # Specifies the model being serialized, which is TripDetail.
         fields = ("id", "trip_start_date", "current_location", "pickup_location", "dropoff_location")
-        # Defines the fields to be included in the serialization
+        # These are the fields that will be included in the serialized data for the trip details.
 
 
 class DriverLogbookViewSerializer(ModelSerializer):
     class Meta:
-        model = DriverLogbook
-        fields = ("id", "logbook_date")
+        model = DriverLogbook  # Specifies the model being serialized, which is DriverLogbook.
+        fields = ("id", "logbook_date")  # These are the fields that will be included in the serialized output.
 
 
 class LogbookItemSerializer(ModelSerializer):
     class Meta:
-        model = LogbookItem
+        model = LogbookItem  # Specifies the model being serialized, which is LogbookItem.
         fields = ("id", "driver_logbook", "item_type", "start_time", "remarks", "is_current")
+        # These are the fields that will be included in the serialized output, representing a logbook item.
 
 
 class LogbookItemViewSerializer(ModelSerializer):
@@ -215,7 +208,7 @@ class StopRestSerializer(ModelSerializer):
     """
     Serializer for the StopRest model.
 
-    This serializer handles the serialization of stop/rest details associated with a trip day,
+    This serializer handles the serialization of stop/rest details associated with a trip,
     including the stop location, type, and time details.
     """
 
@@ -303,15 +296,6 @@ class LogbookDetailViewSerializer(ModelSerializer):
         fields = ("id", "logbook_date", "total_miles_driving_today", "mileage_covered_today")
 
     def to_representation(self, logbook):
-        """
-        Customizes the serialized representation of a TripDay instance.
-
-        Args:
-            trip_day (TripDay): The TripDay instance being serialized.
-
-        Returns:
-            dict: The serialized data, including driver details, trip details, and duty hours.
-        """
         data = super().to_representation(logbook)
 
         # Driver details
@@ -412,7 +396,7 @@ class LogbookDetailViewSerializer(ModelSerializer):
         # Define the time range (last n days)
         n_days_ago = now() - timedelta(days=number_of_days)
 
-        # Filter only the relevant trip items for the past days
+        # Filter only the relevant logbook items for the past days
         on_duty_items = LogbookItem.objects.filter(
             driver_logbook__driver__id=driver_id,
             item_type__in=["driving", "on-duty-not-driving"],

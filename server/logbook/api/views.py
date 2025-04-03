@@ -385,7 +385,7 @@ def change_status(request):
     if request.data["currentLogbookItemId"]:
         update_logbook_item_over_multiple_days(request)
     driver_logbook, _ = DriverLogbook.objects.get_or_create(logbook_date=now().date(), driver=request.user)
-    # Serialize the incoming data and add the start time for the new trip item
+    # Serialize the incoming data and add the start time for the new logbook item
     serializer = LogbookItemSerializer(
         data={**request.data, "start_time": make_aware(datetime.now()), "driver_logbook": driver_logbook.id}
     )
@@ -393,16 +393,16 @@ def change_status(request):
     # Validate the data and raise an exception if invalid
     serializer.is_valid(raise_exception=True)
 
-    # Save the new trip item to the database
+    # Save the new logbook item to the database
     new_logbook_item = serializer.save()
 
-    # Serialize the newly created trip item for the response
+    # Serialize the newly created logbook item for the response
     new_logbook_item_data = LogbookItemViewSerializer(new_logbook_item).data
 
     # driver logbook may be different i change status is happening on a different date
     driver_logbook_data = DriverLogbookViewSerializer(driver_logbook).data
 
-    # Return a successful response with the serialized trip item data
+    # Return a successful response with the serialized logbook item data
     return Response(
         {
             "message": "Status updated successfully",
@@ -505,10 +505,10 @@ def get_logbook_detail(request, logbookId):
     if not logbook:
         raise MissingItemError("Error, invalid logbook selected", status_code=400)
 
-    # Serialize the trip day data using the TripDayLogbookView serializer
+    # Serialize the logbook data using the TripDayLogbookView serializer
     logbook_data = LogbookDetailViewSerializer(logbook, context={"driver_id": logbook.driver.id}).data
 
-    # Return a successful response with the serialized trip day logbook data
+    # Return a successful response with the serialized logbook data
     return Response({"message": "success", "logbook_data": logbook_data}, status=200)
 
 
@@ -539,11 +539,11 @@ def driver_end_trip(request):
 def record_mileage_covered_today(request):
     driver_logbook = get_object_or_none(DriverLogbook, id=request.data["currentDriverLogbookId"])
 
-    # If the trip day is not found, raise an error
+    # If the logbook is not found, raise an error
     if not driver_logbook:
         raise MissingItemError("Error, driver logbook does not exist", status_code=400)
 
-    # Update the total miles driven today for the trip day
+    # Update the total miles driven today
     driver_logbook.total_miles_driving_today = request.data["total_miles_driving_today"]
 
     # Set the mileage covered today; if it's not provided, use the total miles driven today
@@ -554,5 +554,5 @@ def record_mileage_covered_today(request):
     )
     driver_logbook.save()
 
-    # Return a successful response indicating that the trip day was closed
+    # Return a successful response indicating that the mileage was recorded
     return Response({"message": "Mileage recorded successfully"}, status=200)
