@@ -67,12 +67,12 @@ const AssignDriver = (props) => {
         {/* Display pickup location (disabled input) */}
         <div className="dialog-row-single-item">
           <label htmlFor="">Pickup Location</label>
-          <input type="text" value={currentTrip?.pickup_location_name} disabled />
+          <input type="text" value={currentTrip?.pickup_location["name"]} disabled />
         </div>
         {/* Display dropoff location (disabled input) */}
         <div className="dialog-row-single-item">
           <label htmlFor="">Dropoff Location</label>
-          <input type="text" value={currentTrip?.dropoff_location_name} disabled />
+          <input type="text" value={currentTrip?.dropoff_location["name"]} disabled />
         </div>
 
         {/* Dropdown for selecting a driver */}

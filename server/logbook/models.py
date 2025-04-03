@@ -11,7 +11,7 @@ from django.db.models import (
     FloatField,
 )
 
-from logbook.choices import trip_item_types
+from logbook.choices import logbook_item_types
 from users.models import User
 
 
@@ -53,7 +53,7 @@ class TripDetail(Model):
     # Start date of the trip, can be null
     trip_start_date = DateField(null=True)
     # End date of the trip, can be null
-    trip_end_date = DateField(null=True)
+    trip_end_date = DateField(null=True, blank=True)
     # Boolean to mark if the trip is currently active
     is_current = BooleanField(default=False)
     # Boolean to mark if the trip is completed
@@ -64,34 +64,27 @@ class TripDetail(Model):
     truck = ForeignKey(Truck, on_delete=PROTECT, null=True, blank=True)
 
 
-# TripDay model: Represents a specific day of a trip, with information about driving and mileage
-class TripDay(Model):
-    # Reference to the trip detail for which this day belongs
-    trip_detail = ForeignKey(TripDetail, on_delete=PROTECT, null=True, blank=True)
-    # Date of the trip day
-    trip_date = DateField()
+class DriverLogbook(Model):
+    logbook_date = DateField()
     # Mileage covered today by the logged-in driver
     total_miles_driving_today = FloatField(default=0)
     # Overall mileage covered today, including co-drivers
     mileage_covered_today = FloatField(default=0)
-    # Boolean to mark if this day is currently active
-    is_current = BooleanField(default=False)
-    # Boolean to mark if this day is completed
-    is_done = BooleanField(default=False)
+    driver = ForeignKey(User, on_delete=PROTECT, null=True, blank=True)
+    truck = ForeignKey(Truck, on_delete=PROTECT, null=True, blank=True)
 
     class Meta:
         # Ensures that there are no duplicate entries for the same trip on the same day
-        unique_together = ("trip_detail", "trip_date")
+        unique_together = ("driver", "logbook_date")
 
     # String representation of the trip day, returns the trip date
     def to_str(self):
-        return f"{self.trip_date}"
+        return f"{self.logbook_date} {self.driver.driver_number}"
 
 
 # StopRest model: Represents a stop or rest period during the trip
 class StopRest(Model):
-    # Reference to the trip day for which this stop/rest is associated
-    trip_day = ForeignKey(TripDay, on_delete=PROTECT, null=True, blank=True)
+    trip_detail = ForeignKey(TripDetail, on_delete=PROTECT, null=True, blank=True)
     # Location of the stop/rest, stored as JSON (e.g., lat, long)
     stop_location = JSONField()
     # Type of stop (e.g., fuel, rest)
@@ -99,19 +92,17 @@ class StopRest(Model):
     # Start time of the stop
     start_time = DateTimeField(null=True)
     # End time of the stop
-    end_time = DateTimeField(null=True)
+    end_time = DateTimeField(null=True, blank=True)
 
 
-# TripItem model: Represents various activities during a specific trip day (e.g., fuel stops, loading/unloading)
-class TripItem(Model):
-    # Reference to the trip day for which this item is associated
-    trip_day = ForeignKey(TripDay, on_delete=PROTECT, null=True, blank=True)
+class LogbookItem(Model):
+    driver_logbook = ForeignKey(DriverLogbook, on_delete=PROTECT, null=True, blank=True)
     # Type of the trip item (e.g., stop, loading, unloading), choices from the trip_item_types list
-    item_type = CharField(max_length=100, choices=trip_item_types)
+    item_type = CharField(max_length=100, choices=logbook_item_types)
     # Start time of the item/activity
     start_time = DateTimeField()
     # End time of the item/activity, can be null
-    end_time = DateTimeField(null=True)
+    end_time = DateTimeField(null=True, blank=True)
     # Additional remarks for the trip item
     remarks = CharField(max_length=255, null=True)
     # Boolean to mark if this item is currently active

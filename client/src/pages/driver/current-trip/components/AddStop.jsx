@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react"; // Import React and hooks (useState, useEffect)
-import { Button } from "@mui/material"; // Import Button component from Material UI
 import CustomModal from "@/components/shared/CustomModal"; // Import CustomModal component
 import { useDispatch } from "react-redux"; // Import useDispatch hook for Redux state management
 import { toggleLoading } from "@/redux/features/sharedSlice"; // Import toggleLoading action from Redux slice
@@ -11,7 +10,7 @@ import LocationSearch from "@/components/shared/trips/LocationSearch"; // Import
 // Array defining stop types for the trip
 const stopTypes = ["Pickup", "Dropoff", "Fueling", "Rest"];
 
-const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
+const AddStop = ({ openAddStop, setOpenAddStop, currentTripId }) => {
   const dispatch = useDispatch(); // Initialize dispatch for Redux actions
 
   // State to manage stop details
@@ -21,7 +20,6 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
     coords: null, // Geographical coordinates of the stop
     startTime: null, // Start time of the stop
     endTime: null, // End time of the stop
-    isTiming: false, // Whether the stop time is being tracked
   });
 
   // useEffect hook to get the user's current location on component mount
@@ -45,7 +43,7 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
 
   // useEffect hook to set start time and begin tracking time when the component mounts
   useEffect(() => {
-    setStop((prev) => ({ ...prev, startTime: new Date(), endTime: null, isTiming: true }));
+    setStop((prev) => ({ ...prev, startTime: new Date(), endTime: null }));
   }, []); // This effect also runs only once when the component mounts
 
   // Function to handle location selection from the LocationSearch component
@@ -72,7 +70,7 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
     // Prepare data for API request
     const body = {
       stop_location: { coords: stop.coords, name: stop.location },
-      trip_day: currentTripDay.id, // Use the current trip day ID
+      trip_detail: currentTripId, // Use the current trip day ID
       stop_type: stop.type, // Type of stop (Pickup, Dropoff, etc.)
       start_time: stop.startTime, // Start time of the stop
       end_time: new Date(), // End time of the stop
@@ -88,7 +86,6 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTripDay }) => {
           coords: null,
           startTime: null,
           endTime: null,
-          isTiming: false,
         });
       })
       .catch((err) => {}) // Error handling if the API request fails

@@ -13,6 +13,10 @@ const DriverLinks = ({ Link, pathname }) => {
         <i className="bx bxs-dashboard"></i> {/* Icon for Previous Trips */}
         <span className="nav-name">Previous Trips</span> {/* Label for the link */}
       </Link>
+      <Link to="/my-logbooks/" className={`${pathname}` === "/my-logbooks/" ? "sidebar-link active" : "sidebar-link"}>
+        <i className="bx bx-clipboard"></i>
+        <span className="nav-name">My Logbooks</span> {/* Label for the link */}
+      </Link>
     </>
   );
 };

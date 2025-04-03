@@ -10,8 +10,9 @@ import { toggleLoading } from "@/redux/features/sharedSlice"; // Action to toggl
 import ELDLogUI from "@/components/shared/ELDLog/ELDLogUI"; // Component to display ELD Log
 import AddTrip from "./components/AddTrip"; // Component for adding a new trip
 import TripSummary from "@/components/shared/trips/TripSummary"; // Component for trip summary
-import RouteMap from "@/components/shared/trips/RouteMap"; // Component to view route map
 import AssignDriver from "./components/AssignDriver"; // Component to assign a driver to a trip
+import PlannedRouteMap from "@/components/shared/trips/PlannedRouteMap";
+import ActualRouteMap from "@/components/shared/trips/ActualRouteMap";
 
 // Functional component to handle trips management
 const Trips = () => {
@@ -26,10 +27,11 @@ const Trips = () => {
 
   // States for managing modal visibility
   const [openELDLog, setOpenELDLog] = useState(false); // ELD log modal state
-  const [openRouteMap, setOpenRouteMap] = useState(false); // Route map modal state
+  const [openActualRouteMap, setOpenActualRouteMap] = useState(false); // Route map modal state
   const [openTripSummary, setOpenTripSummary] = useState(false); // Trip summary modal state
   const [openAddTrip, setOpenAddTrip] = useState(false); // Add trip modal state
   const [openAssignDriver, setOpenAssignDriver] = useState(false); // Assign driver modal state
+  const [openPlannedRouteMap, setOpenPlannedRouteMap] = useState(false);
 
   // Dispatch function for Redux actions
   const dispatch = useDispatch();
@@ -57,14 +59,19 @@ const Trips = () => {
     setOpenELDLog(true); // Open ELD Log modal
   };
 
-  const handleOpenRouteMap = (tripId) => {
-    setSelectedTripId(tripId); // Set selected trip ID
-    setOpenRouteMap(true); // Open Route Map modal
+  const handleOpenPlannedRouteMap = (trip) => {
+    setCurrentTrip(trip);
+    setOpenPlannedRouteMap(true);
   };
 
   const handleOpenTripSummary = (tripId) => {
     setSelectedTripId(tripId); // Set selected trip ID
     setOpenTripSummary(true); // Open Trip Summary modal
+  };
+
+  const handleOpenActualRoute = (trip) => {
+    setCurrentTrip(trip);
+    setOpenActualRouteMap(true); // Open Route Map modal
   };
 
   const handleOpenAssignDriver = (trip) => {
@@ -98,8 +105,8 @@ const Trips = () => {
               <th>Driver</th>
               <th>Truck</th>
               <th>Status</th>
-              <th>View Logbook</th>
-              <th>View Route</th>
+              <th>Planned Route Map</th>
+              <th>Route Map So Far</th>
               <th>Trip Summary</th>
             </tr>
           </thead>
@@ -108,8 +115,8 @@ const Trips = () => {
             {tripsList?.map((trip) => (
               <tr className="table-listing-item" key={trip?.id}>
                 <td>{trip?.trip_start_date ? moment(trip?.trip_start_date).format("LL") : <span className="red bd">Not Set</span>}</td>
-                <td>{trip?.pickup_location_name}</td>
-                <td>{trip?.dropoff_location_name}</td>
+                <td>{trip?.pickup_location?.["name"]}</td>
+                <td>{trip?.dropoff_location?.["name"]}</td>
                 <td>
                   {trip?.driver_name !== "" ? (
                     trip?.driver_name
@@ -124,25 +131,12 @@ const Trips = () => {
                 </td>
                 <td>{trip?.truck_number !== "" ? <span>{trip?.truck_number}</span> : <span className="red bd">Not Assigned</span>}</td>
                 <td>{trip?.is_done ? <span className="green bd">Completed</span> : <span className="red bd">Ongoing</span>}</td>
-                <td className="button-span">
-                  {trip?.logbook_count > 0 ? (
-                    <>
-                      {/* Display logbooks associated with trip */}
-                      {Array.from({ length: trip?.logbook_count })?.map((_, index) => (
-                        <>
-                          <span onClick={() => handleOpenELDLog(trip?.id, index)} style={{ margin: "0.5rem 0", display: "block" }}>
-                            Logbook {index + 1}
-                          </span>
-                          <hr />
-                        </>
-                      ))}
-                    </>
-                  ) : (
-                    <span className="red bd">No logbooks yet</span>
-                  )}
+
+                <td className="button-span" onClick={() => handleOpenPlannedRouteMap(trip)}>
+                  Planned Route Map
                 </td>
-                <td className="button-span" onClick={() => handleOpenRouteMap(trip?.id)}>
-                  View Route
+                <td className="button-span" onClick={() => handleOpenActualRoute(trip)}>
+                  View Route So Far
                 </td>
                 <td className="button-span" onClick={() => handleOpenTripSummary(trip?.id)}>
                   Trip Summary
@@ -162,7 +156,13 @@ const Trips = () => {
       )}
 
       {/* Modal for viewing Route Map */}
-      {openRouteMap && <RouteMap openRouteMap={openRouteMap} setOpenRouteMap={setOpenRouteMap} selectedTripId={selectedTripId} />}
+      {openActualRouteMap && (
+        <ActualRouteMap
+          openActualRouteMap={openActualRouteMap}
+          setOpenActualRouteMap={setOpenActualRouteMap}
+          selectedTripId={currentTrip?.id}
+        />
+      )}
 
       {/* Modal for viewing Trip Summary */}
       {openTripSummary && (
@@ -181,6 +181,13 @@ const Trips = () => {
           setOpenAssignDriver={setOpenAssignDriver}
           currentTrip={currentTrip}
           setTripsList={setTripsList}
+        />
+      )}
+      {openPlannedRouteMap && (
+        <PlannedRouteMap
+          openPlannedRouteMap={openPlannedRouteMap}
+          setOpenPlannedRouteMap={setOpenPlannedRouteMap}
+          currentTrip={currentTrip}
         />
       )}
     </div>

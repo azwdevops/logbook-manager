@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     driver_number = CharField(
         max_length=100, unique=True, null=True, blank=True, db_collation="case_insensitive"
     )  # Unique driver number
-    driver_initials = CharField(max_length=100)  # Driver initials
+    driver_initials = CharField(max_length=100, null=True, blank=True)  # Driver initials
     is_driver = BooleanField(default=False)  # Flag if user is a driver
     is_carrier_admin = BooleanField(default=False)  # Flag if user is a carrier admin
     driver_assigned = BooleanField(default=False)  # Flag if driver is assigned to a job

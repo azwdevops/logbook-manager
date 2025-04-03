@@ -1,5 +1,4 @@
-# Define possible trip item types as tuples
-trip_item_types = (
+logbook_item_types = (
     ("", "select item"),  # Empty value for unselected option
     ("off-duty", "Off Duty"),  # Represents off-duty time
     ("driving", "Driving"),  # Represents driving time

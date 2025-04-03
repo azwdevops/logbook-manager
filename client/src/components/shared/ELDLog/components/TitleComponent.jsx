@@ -45,20 +45,6 @@ const TitleComponent = ({ trip_date, driver_number, driver_initials, pickup_loca
           <span>Duplicate: Driver retains in his/her possession for 8 days.</span> {/* Information about duplicate file */}
         </div>
       </section>
-
-      {/* Subtitle section for the trip's route information */}
-      <section class="subtitle-section">
-        {/* From pickup location */}
-        <div>
-          From: <span style={{ fontWeight: "bold" }}>{pickup_location_name}</span> {/* Displaying pickup location */}
-          <hr /> {/* Horizontal line separator */}
-        </div>
-        {/* To dropoff location */}
-        <div>
-          To: <span style={{ fontWeight: "bold" }}>{dropoff_location_name}</span> {/* Displaying dropoff location */}
-          <hr /> {/* Horizontal line separator */}
-        </div>
-      </section>
     </>
   );
 };

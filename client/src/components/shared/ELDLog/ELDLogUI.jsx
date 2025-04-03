@@ -21,15 +21,14 @@ import { toggleLoading } from "@/redux/features/sharedSlice"; // Importing actio
  * @param {Object} props - The properties passed to the component.
  * @param {boolean} openELDLog - A boolean flag to control whether the modal is open.
  * @param {function} setOpenELDLog - Function to control the state of the modal.
- * @param {string} selectedTripId - The ID of the selected trip.
  * @param {number} logbookIndex - The index of the logbook entry.
  */
 const ELDLogUI = (props) => {
-  const { openELDLog, setOpenELDLog, selectedTripId, logbookIndex } = props; // Destructuring props
+  const { openELDLog, setOpenELDLog, selectedLogbookId } = props; // Destructuring props
 
   const printArea = useRef(null); // Reference to the area to be printed
 
-  const [tripLogbook, setTripLogbook] = useState({}); // State to hold the fetched trip logbook data
+  const [driverLogbook, setDriverLogbook] = useState({}); // State to hold the fetched trip logbook data
 
   // Destructuring relevant properties from tripLogbook state
   const {
@@ -38,7 +37,7 @@ const ELDLogUI = (props) => {
     driver_number,
     pickup_location_name,
     dropoff_location_name,
-    trip_items,
+    logbook_items,
     mileage_covered_today,
     total_miles_driving_today,
     truck_trailer_number,
@@ -47,7 +46,7 @@ const ELDLogUI = (props) => {
     on_duty_hours_last_five_days,
     on_duty_hours_last_eight_days,
     carrier_name,
-  } = tripLogbook;
+  } = driverLogbook;
 
   const dispatch = useDispatch(); // Getting dispatch function from Redux
 
@@ -55,9 +54,9 @@ const ELDLogUI = (props) => {
     // Fetching logbook data when component mounts or when dependencies change
     const fetchData = async () => {
       dispatch(toggleLoading(true)); // Dispatching loading action
-      await API.get(`/logbook/get-logbook-detail/${selectedTripId}/${logbookIndex}/`)
+      await API.get(`/logbook/get-logbook-detail/${selectedLogbookId}/`)
         .then((res) => {
-          setTripLogbook(res?.data?.trip_day_data); // Storing fetched data in state
+          setDriverLogbook(res?.data?.logbook_data); // Storing fetched data in state
         })
         .catch((err) => {
           showError(err);
@@ -66,7 +65,7 @@ const ELDLogUI = (props) => {
         .finally(() => dispatch(toggleLoading(false))); // Dispatching loading action to false after request
     };
     fetchData(); // Calling fetchData function
-  }, [dispatch, selectedTripId, logbookIndex]); // Dependencies: dispatch, selectedTripId, logbookIndex
+  }, [dispatch, selectedLogbookId]); // Dependencies: dispatch
 
   const handlePrint = useReactToPrint({
     contentRef: printArea, // Reference to the area to be printed
@@ -94,7 +93,7 @@ const ELDLogUI = (props) => {
         <br />
         <br />
         {/* Displaying schedule if available */}
-        {trip_items && <Schedule scheduleItems={trip_items} />}
+        <Schedule scheduleItems={logbook_items} />
         <br />
         {/* Displaying remarks section */}
         <Remarks />

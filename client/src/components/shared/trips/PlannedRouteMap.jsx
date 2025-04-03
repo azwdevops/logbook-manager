@@ -19,11 +19,8 @@ const createMarkerIcon = (color) =>
   });
 
 // Main component to display the current trip route map
-const CurrentTripRouteMap = ({ openCurrentTripRouteMap, setOpenCurrentTripRouteMap, currentTrip }) => {
+const PlannedRouteMap = ({ openPlannedRouteMap, setOpenPlannedRouteMap, currentTrip }) => {
   const [route, setRoute] = useState(null); // State to hold the route data from the API
-
-  // Return null if there's no current trip data
-  if (!currentTrip) return null;
 
   // Destructure trip locations from currentTrip prop
   const { current_location, pickup_location, dropoff_location } = currentTrip;
@@ -35,24 +32,6 @@ const CurrentTripRouteMap = ({ openCurrentTripRouteMap, setOpenCurrentTripRouteM
     { coords: pickup_location?.coords, label: "Pickup Location", color: "blue" },
     { coords: dropoff_location?.coords, label: "Dropoff Location", color: "green" },
   ].filter((loc) => loc.coords); // Remove undefined locations
-
-  // Show an error message if there are fewer than 2 valid locations
-  if (locations.length < 2) {
-    return (
-      <CustomModal isOpen={openCurrentTripRouteMap}>
-        <div className="dialog">
-          <h3>Planned Trip Route Map</h3>
-          <p className="tc">Not enough location data to display the route.</p>
-          <br />
-          <div className="form-buttons">
-            <button type="button" onClick={() => setOpenCurrentTripRouteMap(false)}>
-              Close
-            </button>
-          </div>
-        </div>
-      </CustomModal>
-    );
-  }
 
   // Set the center of the map to the pickup location or the first available location
   const mapCenter = pickup_location?.coords || locations[0].coords;
@@ -93,7 +72,7 @@ const CurrentTripRouteMap = ({ openCurrentTripRouteMap, setOpenCurrentTripRouteM
 
   // Render the map and markers inside a modal
   return (
-    <CustomModal isOpen={openCurrentTripRouteMap}>
+    <CustomModal isOpen={openPlannedRouteMap}>
       <div className="dialog">
         <h3>Planned Trip Route Map</h3>
         <p className="tc">The map below shows the planned trip route following actual roads.</p>
@@ -116,7 +95,7 @@ const CurrentTripRouteMap = ({ openCurrentTripRouteMap, setOpenCurrentTripRouteM
 
         {/* Button to close the modal */}
         <div className="form-buttons">
-          <button type="button" onClick={() => setOpenCurrentTripRouteMap(false)}>
+          <button type="button" onClick={() => setOpenPlannedRouteMap(false)}>
             Close
           </button>
         </div>
@@ -125,4 +104,4 @@ const CurrentTripRouteMap = ({ openCurrentTripRouteMap, setOpenCurrentTripRouteM
   );
 };
 
-export default CurrentTripRouteMap;
+export default PlannedRouteMap;

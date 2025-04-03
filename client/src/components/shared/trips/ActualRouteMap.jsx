@@ -12,14 +12,14 @@ import axios from "axios"; // Importing axios for making HTTP requests
 const ORS_API_KEY = import.meta.env.VITE_ORS_API_KEY;
 
 /**
- * RouteMap component displays a route map with stops, fetched from the server and OpenRouteService API.
+ * ActualRouteMap component displays a route map with stops, fetched from the server and OpenRouteService API.
  *
  * @param {Object} props - The component props.
- * @param {boolean} props.openRouteMap - State that determines whether the modal is open or closed.
- * @param {Function} props.setOpenRouteMap - Function to close the modal.
+ * @param {boolean} props.openActualRouteMap - State that determines whether the modal is open or closed.
+ * @param {Function} props.setOpenActualRouteMap - Function to close the modal.
  * @param {string} props.selectedTripId - The ID of the selected trip to fetch data for.
  */
-const RouteMap = ({ openRouteMap, setOpenRouteMap, selectedTripId }) => {
+const ActualRouteMap = ({ openActualRouteMap, setOpenActualRouteMap, selectedTripId }) => {
   const dispatch = useDispatch(); // Initialize Redux dispatch
   const [tripStopsData, setTripStopsData] = useState([]); // Store trip stop data
   const [middleStop, setMiddleStop] = useState(null); // Store coordinates of the middle stop for map centering
@@ -81,7 +81,7 @@ const RouteMap = ({ openRouteMap, setOpenRouteMap, selectedTripId }) => {
   }, [tripStopsData]); // Re-run the effect when `tripStopsData` changes
 
   return (
-    <CustomModal isOpen={openRouteMap}>
+    <CustomModal isOpen={openActualRouteMap}>
       <div className="dialog">
         <h3>Route Map</h3>
         <p className="tc">The map below shows the trip route including stops.</p>
@@ -116,7 +116,7 @@ const RouteMap = ({ openRouteMap, setOpenRouteMap, selectedTripId }) => {
         )}
 
         <div className="form-buttons">
-          <button type="button" onClick={() => setOpenRouteMap(false)}>
+          <button type="button" onClick={() => setOpenActualRouteMap(false)}>
             Close
           </button>{" "}
           {/* Close button */}
@@ -126,4 +126,4 @@ const RouteMap = ({ openRouteMap, setOpenRouteMap, selectedTripId }) => {
   );
 };
 
-export default RouteMap; // Export the RouteMap component
+export default ActualRouteMap; // Export the ActualRouteMap component

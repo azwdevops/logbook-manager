@@ -5,8 +5,8 @@ import API from "@/utils/API"; // Import API utility for making HTTP requests
 import React, { useState } from "react"; // Import React and useState hook
 import { useDispatch } from "react-redux"; // Import useDispatch hook for dispatching actions to Redux store
 
-const CloseTripDay = (props) => {
-  const { openCloseTripDay, setOpenCloseTripDay, currentTripDayId, currentTripItemId, setCurrentTripDay, setCurrentTripItem } = props; // Destructure props passed to the component
+const RecordMileageToday = (props) => {
+  const { openRecordMileageToday, setOpenRecordMileageToday, currentDriverLogbookId } = props; // Destructure props passed to the component
 
   const dispatch = useDispatch(); // Initialize dispatch for Redux actions
 
@@ -19,17 +19,14 @@ const CloseTripDay = (props) => {
     dispatch(toggleLoading(true)); // Dispatch loading state to Redux store
 
     // API request to close the trip day
-    await API.post(`/logbook/close-trip-day/`, {
+    await API.post(`/logbook/record-mileage-covered-today/`, {
       mileage_covered_today: mileageCoveredToday, // Pass mileage covered today
       total_miles_driving_today: totalMilesDrivingToday, // Pass total miles driven today
-      trip_day_id: currentTripDayId, // Pass the current trip day ID
-      current_trip_item_id: currentTripItemId, // Pass the current trip item ID
+      currentDriverLogbookId, // Pass the current trip item ID
     })
       .then((res) => {
         // On success, reset states and show success message
-        setCurrentTripDay(null); // Clear current trip day
-        setCurrentTripItem(null); // Clear current trip item
-        setOpenCloseTripDay(false); // Close the modal
+        setOpenRecordMileageToday(false); // Close the modal
         window.alert(res?.data?.message); // Show success message
       })
       .catch((err) => showError(err)) // Handle errors by calling showError utility
@@ -38,9 +35,9 @@ const CloseTripDay = (props) => {
 
   return (
     // Render CustomModal component for closing trip day form
-    <CustomModal isOpen={openCloseTripDay} maxWidth="600px" maxHeight="300px">
+    <CustomModal isOpen={openRecordMileageToday} maxWidth="600px" maxHeight="300px">
       <form className="dialog" onSubmit={handleCloseTripDay}>
-        <h3>Close the activities of the day</h3>
+        <h3>Record miles covered today</h3>
         <div className="dialog-row-single-item">
           {/* Input field for total miles driven today */}
           <label htmlFor="">Total Miles Driving Today</label>
@@ -66,7 +63,7 @@ const CloseTripDay = (props) => {
         </div>
         <div className="form-buttons">
           {/* Button to close the modal without submitting */}
-          <button type="button" onClick={() => setOpenCloseTripDay(false)}>
+          <button type="button" onClick={() => setOpenRecordMileageToday(false)}>
             Close
           </button>
           {/* Submit button to submit the form and close the trip day */}
@@ -77,4 +74,4 @@ const CloseTripDay = (props) => {
   );
 };
 
-export default CloseTripDay; // Export CloseTripDay component
+export default RecordMileageToday; // Export CloseTripDay component

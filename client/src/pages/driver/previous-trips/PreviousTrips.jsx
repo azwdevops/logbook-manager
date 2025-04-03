@@ -9,7 +9,7 @@ import { toggleLoading } from "@/redux/features/sharedSlice"; // Redux action to
 
 import ELDLogUI from "@/components/shared/ELDLog/ELDLogUI"; // Component to display ELD logbook UI
 import "./PreviousTrips.css"; // Custom styles for the component
-import RouteMap from "@/components/shared/trips/RouteMap"; // Component to display route map
+import ActualRouteMap from "@/components/shared/trips/ActualRouteMap"; // Component to display route map
 import TripSummary from "@/components/shared/trips/TripSummary"; // Component to display trip summary
 
 const PreviousTrips = () => {
@@ -25,7 +25,7 @@ const PreviousTrips = () => {
 
   // States for controlling the visibility of different UI components
   const [openELDLog, setOpenELDLog] = useState(false);
-  const [openRouteMap, setOpenRouteMap] = useState(false);
+  const [openActualRouteMap, setOpenActualRouteMap] = useState(false);
   const [openTripSummary, setOpenTripSummary] = useState(false);
 
   // Dispatch function to dispatch Redux actions
@@ -35,7 +35,7 @@ const PreviousTrips = () => {
   useEffect(() => {
     const fetchData = async () => {
       dispatch(toggleLoading(true)); // Show loading spinner
-      await API.get(`/logbook/get-trips/`) // Make API call to fetch trips
+      await API.get(`/logbook/driver-get-trips/`) // Make API call to fetch trips
         .then((res) => {
           setRecentTrips(res?.data?.trips_data); // Set trips data to state
         })
@@ -55,7 +55,7 @@ const PreviousTrips = () => {
   // Handler for opening route map when a trip is clicked
   const handleOpenRouteMap = (tripId) => {
     setSelectedTripId(tripId); // Set selected trip ID
-    setOpenRouteMap(true); // Open route map UI
+    setOpenActualRouteMap(true); // Open route map UI
   };
 
   // Handler for opening trip summary when a trip is clicked
@@ -79,7 +79,6 @@ const PreviousTrips = () => {
                 <th>Date</th>
                 <th>Pickup Location</th>
                 <th>Dropoff Location</th>
-                <th>View Logbook</th>
                 <th>View Route</th>
                 <th>Trip Summary</th>
               </tr>
@@ -91,17 +90,6 @@ const PreviousTrips = () => {
                   <td data-label="Start Date">{moment(trip?.trip_start_date).format("LL")}</td> {/* Format trip start date */}
                   <td data-label="Pickup Location">{trip?.pickup_location_name}</td>
                   <td data-label="Dropoff Location">{trip?.dropoff_location_name}</td>
-                  <td className="button-span" data-label="Logbooks">
-                    {/* Display logbooks for each trip if available */}
-                    {Array.from({ length: trip?.logbook_count })?.map((_, index) => (
-                      <>
-                        <span onClick={() => handleOpenELDLog(trip?.id, index)} style={{ margin: "0.5rem 0", display: "block" }}>
-                          Logbook {index + 1}
-                        </span>
-                        <hr />
-                      </>
-                    ))}
-                  </td>
                   <td className="button-span" onClick={() => handleOpenRouteMap(trip?.id)}>
                     View Route
                   </td>
@@ -117,12 +105,18 @@ const PreviousTrips = () => {
         )}
       </div>
 
-      {/* Conditionally render ELDLogUI, RouteMap, and TripSummary components based on state */}
+      {/* Conditionally render ELDLogUI, ActualRouteMap, and TripSummary components based on state */}
       {openELDLog && (
         <ELDLogUI openELDLog={openELDLog} setOpenELDLog={setOpenELDLog} selectedTripId={selectedTripId} logbookIndex={logbookIndex} />
       )}
 
-      {openRouteMap && <RouteMap openRouteMap={openRouteMap} setOpenRouteMap={setOpenRouteMap} selectedTripId={selectedTripId} />}
+      {openActualRouteMap && (
+        <ActualRouteMap
+          openActualRouteMap={openActualRouteMap}
+          setOpenActualRouteMap={setOpenActualRouteMap}
+          selectedTripId={selectedTripId}
+        />
+      )}
 
       {openTripSummary && (
         <TripSummary openTripSummary={openTripSummary} setOpenTripSummary={setOpenTripSummary} selectedTripId={selectedTripId} />

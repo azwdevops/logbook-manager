@@ -19,6 +19,7 @@ import Carriers from "@/pages/system-admin/carriers/Carriers"; // Importing Carr
 import Drivers from "@/pages/carrier-admin/drivers/Drivers"; // Importing Drivers page component for carrier admin
 import Trips from "@/pages/carrier-admin/trips/Trips"; // Importing Trips page component for carrier admin
 import Trucks from "@/pages/carrier-admin/trucks/Trucks"; // Importing Trucks page component for carrier admin
+import MyLogbooks from "./pages/driver/my-logbooks/MyLogbooks";
 
 // Main App component
 function App() {
@@ -55,6 +56,7 @@ function App() {
           <>
             <Route exact path="/current-trip/" element={<CurrentTrip />} /> // Accessible by drivers only
             <Route exact path="/previous-trips/" element={<PreviousTrips />} /> // Accessible by drivers only
+            <Route exact path="/my-logbooks/" element={<MyLogbooks />} />
           </>
         )}
         {[globals?.CARRIER_ADMIN_GROUP]?.some((allowed_group) => user_groups?.includes(allowed_group)) && (

@@ -5,6 +5,7 @@ import { showError } from "@/utils";
 import { useDispatch } from "react-redux";
 import { toggleLoading } from "@/redux/features/sharedSlice";
 import EditDriver from "./components/EditDriver";
+import ViewLogbooks from "./components/ViewLogbooks";
 
 /**
  * Drivers component manages the list of drivers.
@@ -24,6 +25,8 @@ const Drivers = () => {
 
   // State to store the list of drivers
   const [driversList, setDriversList] = useState([]);
+
+  const [openViewLogbooks, setOpenViewLogbooks] = useState(false);
 
   /**
    * Fetches the list of drivers when the component mounts.
@@ -51,6 +54,11 @@ const Drivers = () => {
     setOpenEditDriver(true);
   };
 
+  const handleOpenViewLogbooks = (driver) => {
+    setCurrentDriver(driver);
+    setOpenViewLogbooks(true);
+  };
+
   return (
     <div>
       <h3>Manage Your Drivers</h3>
@@ -72,6 +80,7 @@ const Drivers = () => {
               <th>Name</th>
               <th>Driver Number</th>
               <th>Edit</th>
+              <th>Logbooks</th>
             </tr>
           </thead>
           <tbody>
@@ -84,6 +93,9 @@ const Drivers = () => {
                 {/* Clicking Edit triggers the edit modal */}
                 <td className="button-span" onClick={() => handleOpenEditDriver(driver)}>
                   Edit
+                </td>
+                <td className="button-span" onClick={() => handleOpenViewLogbooks(driver)}>
+                  View Logbooks
                 </td>
               </tr>
             ))}
@@ -111,6 +123,9 @@ const Drivers = () => {
           setDriversList={setDriversList}
           currentDriver={currentDriver}
         />
+      )}
+      {openViewLogbooks && (
+        <ViewLogbooks openViewLogbooks={openViewLogbooks} setOpenViewLogbooks={setOpenViewLogbooks} currentDriver={currentDriver} />
       )}
     </div>
   );
