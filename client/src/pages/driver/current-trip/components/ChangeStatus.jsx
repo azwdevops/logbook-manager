@@ -4,7 +4,7 @@ import { showError } from "@/utils"; // Import showError utility for error handl
 import API from "@/utils/API"; // Import API utility for making HTTP requests
 import React, { useState } from "react"; // Import React and useState hook
 import { useDispatch } from "react-redux"; // Import useDispatch hook for dispatching actions to Redux store
-import Timer from "./Timer"; // Import Timer component to display a timer for the current trip item
+import Timer from "./Timer"; // Import Timer component to display a timer for the current logbook item
 
 const ChangeStatus = (props) => {
   const { openChangeStatus, setOpenChangeStatus, currentLogbookItem, setCurrentLogbookItem, setCurrentDriverLogbook } = props; // Destructure props
@@ -20,16 +20,16 @@ const ChangeStatus = (props) => {
 
     // API request to update the status
     await API.post(`/logbook/change-status/`, {
-      item_type: selectedStatus, // Pass selected trip status
+      item_type: selectedStatus, // Pass selected driver status
       remarks, // Pass remarks entered by the user
-      currentLogbookItemId: currentLogbookItem?.id || null, // Pass current trip item data
+      currentLogbookItemId: currentLogbookItem?.id || null, // Pass logbook item data
       is_current: true,
     })
       .then((res) => {
         // Reset form state upon successful response
         setRemarks(""); // Clear remarks input
         setSelectedStatus(""); // Clear selected status
-        setCurrentLogbookItem(res?.data?.new_logbook_item_data); // Update current trip item with new data
+        setCurrentLogbookItem(res?.data?.new_logbook_item_data); // Update current logbook item with new data
         setCurrentDriverLogbook(res?.data?.driver_logbook_data);
         window.alert(res?.data?.message); // Display success message
       })
@@ -49,7 +49,7 @@ const ChangeStatus = (props) => {
           <h4 className="tc">
             Current Status: <span className="green">{currentLogbookItem?.item_type_name || <span className="red bd">Not Set</span>}</span>
           </h4>
-          {/* Display timer based on the current trip item start time */}
+          {/* Display timer based on the current logbook item start time */}
           <Timer startTime={currentLogbookItem?.start_time} />
         </div>
         <div className="dialog-row-single-item">

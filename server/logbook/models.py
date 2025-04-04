@@ -77,7 +77,7 @@ class DriverLogbook(Model):
         # Ensures that there are no duplicate entries for the same trip on the same day
         unique_together = ("driver", "logbook_date")
 
-    # String representation of the trip day, returns the trip date
+    # String representation of the driver logbook, returns the date and driver number
     def to_str(self):
         return f"{self.logbook_date} {self.driver.driver_number}"
 

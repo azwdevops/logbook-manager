@@ -47,7 +47,6 @@ const TripSummary = (props) => {
               <th>Starting Location</th>
               <th>Pickup Location</th>
               <th>Dropoff Location</th>
-              <th>Trip Days</th>
               <th>Cycle Used</th>
             </tr>
           </thead>
@@ -56,7 +55,6 @@ const TripSummary = (props) => {
               <td>{tripSummaryData?.starting_location_name}</td>
               <td>{tripSummaryData?.pickup_location_name}</td>
               <td>{tripSummaryData?.dropoff_location_name}</td>
-              <td>{tripSummaryData?.trip_days_count}</td>
               <td>{tripSummaryData?.cycle_used}</td>
             </tr>
           </tbody>

@@ -21,7 +21,5 @@ urlpatterns = [
         "get-logbook-detail/<int:logbookId>/", views.get_logbook_detail, name="get_logbook_detail"
     ),  # Retrieve details for a specific logbook entry
     path("driver-end-trip/", views.driver_end_trip, name="driver_end_trip"),  # Mark a trip as completed
-    path(
-        "record-mileage-covered-today/", views.record_mileage_covered_today, name="record_mileage_covered_today"
-    ),  # Close the current trip day
+    path("record-mileage-covered-today/", views.record_mileage_covered_today, name="record_mileage_covered_today"),
 ]

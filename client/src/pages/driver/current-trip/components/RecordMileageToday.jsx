@@ -13,8 +13,7 @@ const RecordMileageToday = (props) => {
   const [totalMilesDrivingToday, setTotalMilesDrivingToday] = useState(""); // State to manage total miles driven today
   const [mileageCoveredToday, setMileageCoveredToday] = useState(""); // State to manage total mileage covered today
 
-  // Handle closing of the trip day
-  const handleCloseTripDay = async (e) => {
+  const handleRecordMileageCoveredToday = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
     dispatch(toggleLoading(true)); // Dispatch loading state to Redux store
 
@@ -22,7 +21,7 @@ const RecordMileageToday = (props) => {
     await API.post(`/logbook/record-mileage-covered-today/`, {
       mileage_covered_today: mileageCoveredToday, // Pass mileage covered today
       total_miles_driving_today: totalMilesDrivingToday, // Pass total miles driven today
-      currentDriverLogbookId, // Pass the current trip item ID
+      currentDriverLogbookId, // Pass the current logbook item ID
     })
       .then((res) => {
         // On success, reset states and show success message
@@ -34,9 +33,8 @@ const RecordMileageToday = (props) => {
   };
 
   return (
-    // Render CustomModal component for closing trip day form
     <CustomModal isOpen={openRecordMileageToday} maxWidth="600px" maxHeight="300px">
-      <form className="dialog" onSubmit={handleCloseTripDay}>
+      <form className="dialog" onSubmit={handleRecordMileageCoveredToday}>
         <h3>Record miles covered today</h3>
         <div className="dialog-row-single-item">
           {/* Input field for total miles driven today */}
@@ -66,7 +64,6 @@ const RecordMileageToday = (props) => {
           <button type="button" onClick={() => setOpenRecordMileageToday(false)}>
             Close
           </button>
-          {/* Submit button to submit the form and close the trip day */}
           <button type="submit">Submit</button>
         </div>
       </form>
@@ -74,4 +71,4 @@ const RecordMileageToday = (props) => {
   );
 };
 
-export default RecordMileageToday; // Export CloseTripDay component
+export default RecordMileageToday;

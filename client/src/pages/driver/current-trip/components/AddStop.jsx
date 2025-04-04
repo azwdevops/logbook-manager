@@ -70,7 +70,7 @@ const AddStop = ({ openAddStop, setOpenAddStop, currentTripId }) => {
     // Prepare data for API request
     const body = {
       stop_location: { coords: stop.coords, name: stop.location },
-      trip_detail: currentTripId, // Use the current trip day ID
+      trip_detail: currentTripId, // Use the current trip ID
       stop_type: stop.type, // Type of stop (Pickup, Dropoff, etc.)
       start_time: stop.startTime, // Start time of the stop
       end_time: new Date(), // End time of the stop
